@@ -8,5 +8,8 @@
     },
     "require": {
         "guzzlehttp/guzzle": "^6.3"
-    }
+    },
+    "scripts": {
+        "test": "php tests/auth.php"
+    }   
 }
