@@ -1,0 +1,12 @@
+{
+    "name": "tustin/fortnite-php",
+    "license": "MIT",
+    "autoload": {
+        "classmap": [
+            "src/"
+        ]
+    },
+    "require": {
+        "guzzlehttp/guzzle": "^6.3"
+    }
+}
