@@ -12,6 +12,10 @@ class Stats {
         $this->account_id = $account_id;
     }
 
+    /**
+     * Fetches stats for the current user.
+     * @return object The stats data
+     */
     public function fetch() {
         $data = FortniteClient::sendFortniteGetRequest('stats/accountId/' . $this->account_id . '/bulk/window/alltime',
                                                         $this->access_token);

@@ -15,14 +15,22 @@ class Profile {
         $this->stats = new Stats($access_token, $account_id);
     }
 
-    // Do something better with this. Maybe only extract useful data?
-    private function fetch() {
+    /**
+     * Fetches current profile data
+     * @param  string $profile_id Profile Id to get data for. Unsure what this is used for.
+     * @return object             The profile's data
+     */
+    private function fetch($profile_id = "profile0") {
         $data = FortniteClient::sendFortnitePostRequest('game/v2/profile/' . $this->account_id . '/client/QueryProfile?profileId=profile0&rvn=-1',
                                                         $this->access_token,
                                                         new \StdClass());
         return $data;
     }
 
+    /**
+     * Get current user's friends on Unreal Engine.
+     * @return array    Array of friends
+     */
     public function getFriends() {
         $data = FortniteClient::sendUnrealClientGetRequest(FortniteClient::EPIC_FRIENDS_ENDPOINT . $this->account_id, $this->access_token, true);
 

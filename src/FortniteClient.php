@@ -5,25 +5,40 @@ use GuzzleHttp\Exception\GuzzleException;
 use GuzzleHttp\Client;
 
 class FortniteClient {
-    // Unsure if this changes between client updates or what. It's a base64 encoded string which contains two MD5 hashes delimited by a colon.
-    // The hashes are derived before any authentication so it might be a checksum of some file?
+    /**
+     * base64 encoded string of two MD5 hashes delimited by a colon. The two hashes are the client_id and client_secret OAuth2 fields.
+     */
     const EPIC_LAUNCHER_AUTHORIZATION   = "MzRhMDJjZjhmNDQxNGUyOWIxNTkyMTg3NmRhMzZmOWE6ZGFhZmJjY2M3Mzc3NDUwMzlkZmZlNTNkOTRmYzc2Y2Y=";
 
-    // Same format as the EPIC_LAUNCHER_AUTHORIZATION. Also unsure of it's origin.
+    
+    /**
+     * Same as EPIC_LAUNCHER_AUTHORIZATION
+     */
     const FORTNITE_AUTHORIZATION        = "ZWM2ODRiOGM2ODdmNDc5ZmFkZWEzY2IyYWQ4M2Y1YzY6ZTFmMzFjMjExZjI4NDEzMTg2MjYyZDM3YTEzZmM4NGQ=";
 
 
-    //
-    // API Endpoints
-    //
 
+    /**
+     * Epic API Endpoints
+     */
     const EPIC_OAUTH_TOKEN_ENDPOINT     = "https://account-public-service-prod03.ol.epicgames.com/account/api/oauth/token";
     const EPIC_OAUTH_EXCHANGE_ENDPOINT  = "https://account-public-service-prod03.ol.epicgames.com/account/api/oauth/exchange";
+    const EPIC_OAUTH_VERIFY_ENDPOINT    = "https://account-public-service-prod03.ol.epicgames.com/account/api/oauth/verify";
     const EPIC_FRIENDS_ENDPOINT         = "https://friends-public-service-prod06.ol.epicgames.com/friends/api/public/friends/";
 
+    /**
+     * Fortnite API Endpoints
+     */
     const FORTNITE_API                  = "https://fortnite-public-service-prod11.ol.epicgames.com/fortnite/api/";
 
 
+    /**
+     * Sends a GET request as the Unreal Engine Client.
+     * @param  string  $endpoint      API Endpoint to request
+     * @param  string  $authorization Authorization header
+     * @param  boolean $oauth         Is $authorization an OAuth2 token
+     * @return object                 Decoded JSON response body
+     */
     public static function sendUnrealClientGetRequest($endpoint, $authorization = self::EPIC_LAUNCHER_AUTHORIZATION, $oauth = false) {
         $client = new Client();
 
@@ -37,6 +52,14 @@ class FortniteClient {
         return json_decode($response->getBody()->getContents());
     }
 
+    /**
+     * Sends a POST request as the Unreal Engine Client.
+     * @param  string  $endpoint      API Endpoint to request
+     * @param  array   $params        Request parameters, using the name as the array key and value as the array value
+     * @param  string  $authorization Authorization header
+     * @param  boolean $oauth         Is $authorization an OAuth2 token
+     * @return object                 Decoded JSON response body
+     */
     public static function sendUnrealClientPostRequest($endpoint, $params = null, $authorization = self::EPIC_LAUNCHER_AUTHORIZATION, $oauth = false) {
         $client = new Client();
 
@@ -51,6 +74,12 @@ class FortniteClient {
         return json_decode($response->getBody()->getContents());
     }
 
+    /**
+     * Sends a GET request as the Fortnite client.
+     * @param  string $endpoint     API endpoint to request, appended onto FORTNITE_API
+     * @param  string $access_token OAuth2 access token
+     * @return object               Decoded JSON response body
+     */
     public static function sendFortniteGetRequest($endpoint, $access_token) {
         $client = new Client();
 
@@ -64,8 +93,15 @@ class FortniteClient {
         return json_decode($response->getBody()->getContents());
     }
 
+    /**
+     * Sends a POST request as the Fortnite client.
+     * @param  string $endpoint     API endpoint to request, appended onto FORTNITE_API
+     * @param  string $access_token OAuth2 access token
+     * @param  array  $params       Request parameters, using the name as the array key and value as the array value
+     * @return object               Decoded JSON response body
+     */
     public static function sendFortnitePostRequest($endpoint, $access_token, $params = null) {
-        $client = new Client(['proxy' => '127.0.0.1:8888', 'verify' => false]);
+        $client = new Client();
 
         $response = $client->post(self::FORTNITE_API . $endpoint, [
             'json' => $params,
