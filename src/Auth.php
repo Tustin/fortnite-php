@@ -71,9 +71,7 @@ class Auth {
             throw new Exception($data->errorMessage);
         }
 
-        var_dump($data);
-
-       return new self($data->access_token, $data->refresh_token, $data->account_id, $data->expires_at);
+        return new self($data->access_token, $data->refresh_token, $data->account_id, $data->expires_at);
     }
 
     /**
