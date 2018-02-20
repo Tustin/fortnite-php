@@ -21,7 +21,7 @@ class Profile {
      * @return object             The profile's data
      */
     private function fetch($profile_id = "profile0") {
-        $data = FortniteClient::sendFortnitePostRequest('game/v2/profile/' . $this->account_id . '/client/QueryProfile?profileId=profile0&rvn=-1',
+        $data = FortniteClient::sendFortnitePostRequest(FortniteClient::FORTNITE_API . 'game/v2/profile/' . $this->account_id . '/client/QueryProfile?profileId=profile0&rvn=-1',
                                                         $this->access_token,
                                                         new \StdClass());
         return $data;

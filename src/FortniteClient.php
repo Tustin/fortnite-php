@@ -30,6 +30,7 @@ class FortniteClient {
      * Fortnite API Endpoints
      */
     const FORTNITE_API                  = "https://fortnite-public-service-prod11.ol.epicgames.com/fortnite/api/";
+    const FORTNITE_PERSONA_API          = "https://persona-public-service-prod06.ol.epicgames.com/persona/api/";
 
 
     /**
@@ -41,15 +42,17 @@ class FortniteClient {
      */
     public static function sendUnrealClientGetRequest($endpoint, $authorization = self::EPIC_LAUNCHER_AUTHORIZATION, $oauth = false) {
         $client = new Client();
-
-        $response = $client->get($endpoint, [
-            'headers' => [
-                'User-Agent' => 'game=UELauncher, engine=UE4, build=7.3.1-3881656+++Portal+Release-Live',
-                'Authorization' => (!$oauth) ? 'basic ' . $authorization : 'bearer ' . $authorization
-            ]
-        ]);
-
-        return json_decode($response->getBody()->getContents());
+        try {
+            $response = $client->get($endpoint, [
+                'headers' => [
+                    'User-Agent' => 'game=UELauncher, engine=UE4, build=7.3.1-3881656+++Portal+Release-Live',
+                    'Authorization' => (!$oauth) ? 'basic ' . $authorization : 'bearer ' . $authorization
+                ]
+            ]);
+            return json_decode($response->getBody()->getContents());
+        } catch (GuzzleException $e) {
+            throw $e; //Throw exception back up to caller
+        }
     }
 
     /**
@@ -63,39 +66,48 @@ class FortniteClient {
     public static function sendUnrealClientPostRequest($endpoint, $params = null, $authorization = self::EPIC_LAUNCHER_AUTHORIZATION, $oauth = false) {
         $client = new Client();
 
-        $response = $client->post($endpoint, [
-            'form_params' => $params,
-            'headers' => [
-                'User-Agent' => 'game=UELauncher, engine=UE4, build=7.3.1-3881656+++Portal+Release-Live',
-                'Authorization' => (!$oauth) ? 'basic ' . $authorization : 'bearer ' . $authorization
-            ]
-        ]);
-
-        return json_decode($response->getBody()->getContents());
+        try {
+            $response = $client->post($endpoint, [
+                'form_params' => $params,
+                'headers' => [
+                    'User-Agent' => 'game=UELauncher, engine=UE4, build=7.3.1-3881656+++Portal+Release-Live',
+                    'Authorization' => (!$oauth) ? 'basic ' . $authorization : 'bearer ' . $authorization
+                ]
+            ]);
+            return json_decode($response->getBody()->getContents());
+        } catch (GuzzleException $e) {
+            throw $e; //Throw exception back up to caller
+        }
     }
 
     /**
      * Sends a GET request as the Fortnite client.
-     * @param  string $endpoint     API endpoint to request, appended onto FORTNITE_API
+     * @param  string $endpoint     API endpoint to request
      * @param  string $access_token OAuth2 access token
      * @return object               Decoded JSON response body
      */
     public static function sendFortniteGetRequest($endpoint, $access_token) {
         $client = new Client();
 
-        $response = $client->get(self::FORTNITE_API . $endpoint, [
-            'headers' => [
-                'User-Agent' => 'game=Fortnite, engine=UE4, build=++Fortnite+Release-2.5-CL-3889387, netver=3886413',
-                'Authorization' => 'bearer ' . $access_token
-            ]
-        ]);
+        try {
+            $response = $client->get($endpoint, [
+                'headers' => [
+                    'User-Agent' => 'game=Fortnite, engine=UE4, build=++Fortnite+Release-2.5-CL-3889387, netver=3886413',
+                    'Authorization' => 'bearer ' . $access_token
+                ]
+            ]);
 
-        return json_decode($response->getBody()->getContents());
+            return json_decode($response->getBody()->getContents());
+        } catch (GuzzleException $e) {
+            throw $e; //Throw exception back up to caller
+        }
+
+
     }
 
     /**
      * Sends a POST request as the Fortnite client.
-     * @param  string $endpoint     API endpoint to request, appended onto FORTNITE_API
+     * @param  string $endpoint     API endpoint to request
      * @param  string $access_token OAuth2 access token
      * @param  array  $params       Request parameters, using the name as the array key and value as the array value
      * @return object               Decoded JSON response body
@@ -103,13 +115,18 @@ class FortniteClient {
     public static function sendFortnitePostRequest($endpoint, $access_token, $params = null) {
         $client = new Client();
 
-        $response = $client->post(self::FORTNITE_API . $endpoint, [
-            'json' => $params,
-            'headers' => [
-                'User-Agent' => 'game=Fortnite, engine=UE4, build=++Fortnite+Release-2.5-CL-3889387, netver=3886413',
-                'Authorization' => 'bearer ' . $access_token
-            ]
-        ]);
+        try {
+             $response = $client->post($endpoint, [
+                'json' => $params,
+                'headers' => [
+                    'User-Agent' => 'game=Fortnite, engine=UE4, build=++Fortnite+Release-2.5-CL-3889387, netver=3886413',
+                    'Authorization' => 'bearer ' . $access_token
+                ]
+            ]);
+        } catch (GuzzleException$e) {
+            throw $e; //Throw exception back up to caller
+        }
+
 
         return json_decode($response->getBody()->getContents());
     }
