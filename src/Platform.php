@@ -1,7 +1,7 @@
 <?php
 namespace Fortnite;
 
-use Fortnite\Exception\InvalidPlatformException;
+use Fortnite\Exception\InvalidGameModeException;
 use Fortnite\Model\FortniteStats;
 
 class Platform {
@@ -22,7 +22,7 @@ class Platform {
                 $this->duo = new FortniteStats($mode);
                 break;
                 default:
-                throw new InvalidPlatformException('Platform ' . $key . ' is invalid.'); // Would only happen if Fortnite was released on a new platform.
+                throw new InvalidGameModeException('Mode ' . $key . ' is invalid.'); // Will be thrown if a new game mode is added
             }
         }
     }
