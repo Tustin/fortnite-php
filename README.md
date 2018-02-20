@@ -18,7 +18,12 @@ require_once 'vendor/autoload.php';
 use Fortnite\Auth;
 
 $auth = Auth::login('epic_email@domain.com','password');
-var_dump($auth->profile->stats->fetch());
+var_dump($auth->profile->stats);
+
+// or grab someone's stats
+
+$sandy = $auth->profile->stats->lookup('sandalzrevenge');
+echo 'Sandy Ravage has won ' . $sandy->pc->solo->wins . ' solo games and ' . $sandy->pc->squad->wins . ' squad games!';
 ```
 
 This should output your Fortnite stats as a PHP object.
