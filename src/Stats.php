@@ -4,6 +4,7 @@ namespace Fortnite;
 use Fortnite\FortniteClient;
 use Fortnite\Model\FortniteStats;
 use Fortnite\Exception\UserNotFoundException;
+use Fortnite\Exception\StatsNotFoundException;
 
 use GuzzleHttp\Exception\GuzzleException;
 
@@ -33,6 +34,9 @@ class Stats {
 
         $data = FortniteClient::sendFortniteGetRequest(FortniteClient::FORTNITE_API . 'stats/accountId/' . $account_id . '/bulk/window/alltime',
                                                      $this->access_token);
+
+        // TODO: store display name in this class somewhere?
+        if (!count($data)) throw new StatsNotFoundException('Unable to find any stats for account id '. $account_id);
 
         // Loop over all the stat objects and compile them together cleanly
         $compiledStats = [];
