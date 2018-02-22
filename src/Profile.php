@@ -2,29 +2,32 @@
 namespace Fortnite;
 
 use Fortnite\FortniteClient;
+use Fortnite\Model\Items;
 
 class Profile {
     private $access_token;
     private $account_id;
 
     public $stats;
+    public $items;
 
     public function __construct($access_token, $account_id) {
         $this->access_token = $access_token;
         $this->account_id = $account_id;
+        $data = $this->fetch();
+        $this->items = new Items($data->items);
         $this->stats = new Stats($access_token, $account_id);
     }
 
     /**
-     * Fetches current profile data
-     * @param  string $profile_id Profile Id to get data for. Unsure what this is used for.
-     * @return object             The profile's data
+     * Fetches profile data.
+     * @return object Profile data
      */
-    private function fetch($profile_id = "profile0") {
-        $data = FortniteClient::sendFortnitePostRequest(FortniteClient::FORTNITE_API . 'game/v2/profile/' . $this->account_id . '/client/QueryProfile?profileId=profile0&rvn=-1',
+    private function fetch() {
+        $data = FortniteClient::sendFortnitePostRequest(FortniteClient::FORTNITE_API . 'game/v2/profile/' . $this->account_id . '/client/QueryProfile?profileId=athena&rvn=-1',
                                                         $this->access_token,
                                                         new \StdClass());
-        return $data;
+        return $data->profileChanges[0]->profile;
     }
 
     /**
