@@ -16,6 +16,10 @@ class FortniteStats {
     public $minutes_played = 0;
     public $score = 0;
 
+     /**
+     * Constructs a new Fortnite\Model\FortniteStats instance.
+     * @param array $stats   Array of mapped stats
+     */
     public function __construct($stats) {
         foreach ($stats as $key => $value) {
             switch ($key) {

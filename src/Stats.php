@@ -16,6 +16,11 @@ class Stats {
     public $pc;
     public $xb1;
 
+    /**
+     * Constructs a new Fortnite\Stats instance.
+     * @param string $access_token OAuth2 Access token
+     * @param string $account_id   Epic account id
+     */
     public function __construct($access_token, $account_id) {
         $this->access_token = $access_token;
         $this->account_id = $account_id;
@@ -27,7 +32,8 @@ class Stats {
 
     /**
      * Fetches stats for the current user.
-     * @return object The stats data
+     * @param  string $account_id   Account id
+     * @return object               The stats data
      */
     private function fetch($account_id) {
         if (!$account_id) return null;
@@ -54,6 +60,11 @@ class Stats {
         return $platforms;
     }
 
+    /**
+     * Lookup a user by their Epic display name.
+     * @param  string $username Display name to search
+     * @return object           New instance of Fortnite\Stats
+     */
     public function lookup($username) {
         try {
             $data = FortniteClient::sendFortniteGetRequest(FortniteClient::FORTNITE_PERSONA_API . 'public/account/lookup?q=' . urlencode($username),
@@ -65,6 +76,11 @@ class Stats {
         }
     }
 
+    /**
+     * Parses a stat string into a mapped array.
+     * @param  string $stat The stat string
+     * @return array        The mapped stat array
+     */
     private function parseStatItem($stat): array {
         //
         // Example stat name:

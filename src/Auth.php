@@ -14,7 +14,7 @@ class Auth {
 
 
     /**
-     * Constructs a new Authentication instance.
+     * Constructs a new Fortnite\Auth instance.
      * @param string $access_token  OAuth2 access token
      * @param string $refresh_token OAuth2 refresh token
      * @param string $account_id    Unreal Engine account id

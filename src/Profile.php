@@ -11,6 +11,11 @@ class Profile {
     public $stats;
     public $items;
 
+    /**
+     * Constructs a new Fortnite\Profile instance.
+     * @param string $access_token OAuth2 Access token
+     * @param string $account_id   Epic account id
+     */
     public function __construct($access_token, $account_id) {
         $this->access_token = $access_token;
         $this->account_id = $account_id;

@@ -4,6 +4,10 @@ namespace Fortnite\Model;
 class Items {
     private $items;
 
+    /**
+     * Constructs a new Fortnite\Model\Items instance.
+     * @param object $items   Item objects
+     */
     public function __construct($items) {
         $this->items = $this->parseItems((array)$items);
     }
