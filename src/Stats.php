@@ -42,7 +42,7 @@ class Stats {
                                                      $this->access_token);
 
         // TODO: store display name in this class somewhere?
-        if (!count($data)) throw new StatsNotFoundException('Unable to find any stats for account id '. $account_id);
+        //if (!count($data)) throw new StatsNotFoundException('Unable to find any stats for account id '. $account_id);
 
         // Loop over all the stat objects and compile them together cleanly
         $compiledStats = [];
