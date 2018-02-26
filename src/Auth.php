@@ -8,7 +8,7 @@ class Auth {
     private $access_token;
     private $refresh_token;
     private $account_id;
-    private $expires_at;
+    private $expires_in;
 
     public $profile;
 
@@ -18,13 +18,13 @@ class Auth {
      * @param string $access_token  OAuth2 access token
      * @param string $refresh_token OAuth2 refresh token
      * @param string $account_id    Unreal Engine account id
-     * @param string $expires_at    OAuth2 token expiration time
+     * @param string $expires_in    OAuth2 token expiration time
      */
-    private function __construct($access_token, $refresh_token, $account_id, $expires_at) {
+    private function __construct($access_token, $refresh_token, $account_id, $expires_in) {
         $this->access_token = $access_token;
         $this->refresh_token = $refresh_token;
         $this->account_id = $account_id;
-        $this->expires_at = $expires_at;
+        $this->expires_in = $expires_in;
         $this->profile = new Profile($this->access_token, $this->account_id);
     }
 
@@ -71,7 +71,7 @@ class Auth {
             throw new Exception($data->errorMessage);
         }
 
-        return new self($data->access_token, $data->refresh_token, $data->account_id, $data->expires_at);
+        return new self($data->access_token, $data->refresh_token, $data->account_id, $data->expires_in);
     }
 
     /**
@@ -91,7 +91,7 @@ class Auth {
             throw new Exception($data->errorMessage);
         }
 
-       return new self($data->access_token, $data->refresh_token, $data->account_id, $data->expires_at);
+       return new self($data->access_token, $data->refresh_token, $data->account_id, $data->expires_in);
     }
 
     /**
@@ -103,11 +103,11 @@ class Auth {
     }
 
     /**
-     * Returns the current access token's expire time.
-     * @return string OAuth2 expire time
+     * Returns the time until the OAuth2 access token expires.
+     * @return string Time until OAuth2 access token expires (in seconds)
      */
-    public function expiresAt() {
-        return $this->expires_at;
+    public function expiresIn() {
+        return $this->expires_in;
     }
 
     /**
