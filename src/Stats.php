@@ -76,6 +76,18 @@ class Stats {
         }
     }
 
+    //TODO (Tustin): Make this not redundant
+    public static function lookupWithToken($username, $access_token) {
+        try {
+            $data = FortniteClient::sendFortniteGetRequest(FortniteClient::FORTNITE_PERSONA_API . 'public/account/lookup?q=' . urlencode($username),
+                                                        $access_token);
+            return new self($access_token, $data->id);
+        } catch (GuzzleException $e) {
+            if ($e->getResponse()->getStatusCode() == 404) throw new UserNotFoundException('User ' . $username . ' was not found.');
+            throw $e; //If we didn't get the user not found status code, just re-throw the error.
+        }
+    }
+
     /**
      * Parses a stat string into a mapped array.
      * @param  string $stat The stat string

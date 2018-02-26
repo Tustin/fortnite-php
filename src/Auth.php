@@ -98,7 +98,23 @@ class Auth {
      * Returns current refresh token.
      * @return string OAuth2 refresh token
      */
-    public function getRefreshToken() {
+    public function refreshToken() {
         return $this->refresh_token;
+    }
+
+    /**
+     * Returns the current access token's expire time.
+     * @return string OAuth2 expire time
+     */
+    public function expiresAt() {
+        return $this->expires_at;
+    }
+
+    /**
+     * Returns current access token.
+     * @return string OAuth2 access token
+     */
+    public function accessToken() {
+        return $this->access_token;
     }
 }
