@@ -104,4 +104,8 @@ class Stats {
         $result[$pieces[2]][$pieces[4]][$pieces[1]] = $stat->value;
         return $result;
     }
+
+    public function accountId() {
+        return $this->account_id;
+    }
 }
