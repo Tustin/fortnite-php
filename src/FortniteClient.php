@@ -31,6 +31,10 @@ class FortniteClient {
      */
     const FORTNITE_API                  = "https://fortnite-public-service-prod11.ol.epicgames.com/fortnite/api/";
     const FORTNITE_PERSONA_API          = "https://persona-public-service-prod06.ol.epicgames.com/persona/api/";
+    const FORTNITE_ACCOUNT_API          = "https://account-public-service-prod03.ol.epicgames.com/account/api/";
+    const FORTNITE_NEWS_API             = "https://fortnitecontent-website-prod07.ol.epicgames.com/content/api/";
+
+
 
 
     /**
@@ -84,17 +88,19 @@ class FortniteClient {
      * Sends a GET request as the Fortnite client.
      * @param  string $endpoint     API endpoint to request
      * @param  string $access_token OAuth2 access token
+     * @param  array  $extraheaders (optional)
      * @return object               Decoded JSON response body
      */
-    public static function sendFortniteGetRequest($endpoint, $access_token) {
+    public static function sendFortniteGetRequest($endpoint, $access_token,$extraheaders = array()) {
         $client = new Client();
-
+        $headers = [
+            'User-Agent' => 'game=Fortnite, engine=UE4, build=++Fortnite+Release-2.5-CL-3889387, netver=3886413',
+            'Authorization' => 'bearer ' . $access_token
+        ];
+        $headers = array_merge($headers,$extraheaders);
         try {
             $response = $client->get($endpoint, [
-                'headers' => [
-                    'User-Agent' => 'game=Fortnite, engine=UE4, build=++Fortnite+Release-2.5-CL-3889387, netver=3886413',
-                    'Authorization' => 'bearer ' . $access_token
-                ]
+                'headers' => $headers
             ]);
 
             return json_decode($response->getBody()->getContents());
@@ -104,6 +110,7 @@ class FortniteClient {
 
 
     }
+
 
     /**
      * Sends a POST request as the Fortnite client.

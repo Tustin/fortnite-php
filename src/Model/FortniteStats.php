@@ -15,6 +15,11 @@ class FortniteStats {
     public $matches_played = 0;
     public $minutes_played = 0;
     public $score = 0;
+    public $kill_death_ratio = 0;
+    public $kill_death_per_game = 0;
+    public $score_per_match = 0;
+    public $win_loss_ratio = 0;
+
 
      /**
      * Constructs a new Fortnite\Model\FortniteStats instance.
@@ -61,5 +66,12 @@ class FortniteStats {
                 throw new InvalidStatException('Stat name '. $key . ' is not supported'); // I expect a PR if someone runs into this exception
             }
         }
+
+        // Calculate Kill/Death ratio and round to 2 decimal places
+        $this->kill_death_ratio = round($this->kills / $this->matches_played,2);
+        $this->kill_death_per_game = round($this->kills / $this->minutes_played, 2);
+        $this->score_per_match = round($this->score / $this->matches_played , 2);
+        $this->win_loss_ratio = round($this->wins / $this->matches_played);
     }
+
 }
