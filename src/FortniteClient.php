@@ -33,6 +33,7 @@ class FortniteClient {
     const FORTNITE_PERSONA_API          = "https://persona-public-service-prod06.ol.epicgames.com/persona/api/";
     const FORTNITE_ACCOUNT_API          = "https://account-public-service-prod03.ol.epicgames.com/account/api/";
     const FORTNITE_NEWS_API             = "https://fortnitecontent-website-prod07.ol.epicgames.com/content/api/";
+    const FORTNITE_STATUS_API           = "https://lightswitch-public-service-prod06.ol.epicgames.com/lightswitch/api/";
 
 
 
@@ -78,6 +79,7 @@ class FortniteClient {
                     'Authorization' => (!$oauth) ? 'basic ' . $authorization : 'bearer ' . $authorization
                 ]
             ]);
+
             return json_decode($response->getBody()->getContents());
         } catch (GuzzleException $e) {
             throw $e; //Throw exception back up to caller

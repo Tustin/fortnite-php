@@ -3,6 +3,7 @@ namespace Fortnite;
 
 use Fortnite\FortniteClient;
 use Fortnite\Profile;
+use Fortnite\Status;
 
 class Auth {
     private $access_token;
@@ -30,6 +31,7 @@ class Auth {
         $this->account = new Account($this->access_token);
         $this->store = new Store($this->access_token);
         $this->news = new News($this->access_token);
+        $this->status = new Status($this->access_token);
     }
 
     /**
