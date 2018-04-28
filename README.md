@@ -16,6 +16,11 @@ Create a basic test script to ensure everything was installed properly
 require_once 'vendor/autoload.php';
 
 use Fortnite\Auth;
+use Fortnite\PlayablePlatform;
+use Fortnite\Mode;
+use Fortnite\Language;
+use Fortnite\NewsType;
+use Fortnite\Platform;
 
 $auth = Auth::login('epic_email@domain.com','password');
 var_dump($auth->profile->stats);
