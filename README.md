@@ -6,7 +6,7 @@ Interact with the official Fortnite API using PHP.
 
 ## Installation
 Pull in the project using composer:
-`composer require tustin/fortnite-php`
+`composer require Tustin/fortnite-php`
 
 ## Usage
 Create a basic test script to ensure everything was installed properly
@@ -16,6 +16,11 @@ Create a basic test script to ensure everything was installed properly
 require_once 'vendor/autoload.php';
 
 use Fortnite\Auth;
+use Fortnite\PlayablePlatform;
+use Fortnite\Mode;
+use Fortnite\Language;
+use Fortnite\NewsType;
+use Fortnite\Platform;
 
 $auth = Auth::login('epic_email@domain.com','password');
 var_dump($auth->profile->stats);
@@ -27,3 +32,35 @@ echo 'Sandy Ravage has won ' . $sandy->pc->solo->wins . ' solo games and ' . $sa
 ```
 
 This should output your Fortnite stats as a PHP object.
+
+## Get Leaderboards
+```php
+$auth = Auth::login('epic_email@domain.com','password');
+var_dump($auth->leaderboard->getLeaderboardData(Platform::PC, Mode::DUO)); 
+
+```
+
+## Get News 
+```php
+$auth = Auth::login('epic_email@domain.com','password');
+var_dump($auth->news->getNews(Language::ENGLISH,NewsType::BATTLEROYALE)); 
+```
+
+
+
+## Get Store
+```php
+$auth = Auth::login('epic_email@domain.com','password');
+var_dump($auth->store->getStore(Language::ENGLISH)); 
+```
+
+## Constants
+```
+Platform [ PC, PS4, XB1 ]
+
+Mode [ SOLO, DUO, SQUAD ]
+
+Language [ ENGLISH, GERMAN, SPANISH, CHINESE, FRENCH, ITALIEN, JAPANESE ]
+
+NewsType [ BATTLEROYALE, SAVETHEWORLD ]
+```
