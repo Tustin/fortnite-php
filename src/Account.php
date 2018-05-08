@@ -33,7 +33,7 @@ class Account {
 
             return $data;
         } catch (GuzzleException $e) {
-            if ($e->getResponse()->getStatusCode() == 404) throw new Exception('Could not get display name of acccount id ' . $id);
+            if ($e->getResponse()->getStatusCode() == 404) throw new \Exception('Could not get display name of acccount id ' . $id);
             throw $e;
         }
     }

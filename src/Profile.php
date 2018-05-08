@@ -2,6 +2,7 @@
 namespace Fortnite;
 
 use Fortnite\FortniteClient;
+
 use Fortnite\Model\Items;
 
 class Profile {

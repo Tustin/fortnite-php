@@ -1,11 +1,13 @@
 <?php
-
 namespace Fortnite;
 
-use Fortnite;
-use Fortnite\Model\FortniteNews;
+use Fortnite\FortniteClient;
+use Fortnite\Language;
 use Fortnite\NewsType;
 
+use Fortnite\Model\FortniteNews;
+
+use GuzzleHttp\Exception\GuzzleException;
 
 class News
 {
@@ -16,18 +18,24 @@ class News
         $this->access_token = $access_token;
     }
 
-
-    public function getNews($lang, $type)
+    public function get($type, $lang = Language::ENGLISH)
     {
-        if ($lang != Language::ENGLISH && $lang != Language::GERMAN && $lang != Language::SPANISH && $lang != Language::CHINESE && $lang != Language::FRENCH && $lang != Language::FRENCH && $lang != Language::ITALIEN && $lang != Language::JAPANESE)
-            throw Exception("Unknown Language");
-        if ($type != NewsType::SAVETHEWORLD && $type != NewsType::BATTLEROYALE)
-            throw Exception("Only SaveTheWorld and BattleRoyale news are currently supported");
+        if ($lang !== Language::ENGLISH
+            && $lang !== Language::GERMAN 
+            && $lang !== Language::SPANISH 
+            && $lang !== Language::CHINESE 
+            && $lang !== Language::FRENCH 
+            && $lang !== Language::FRENCH 
+            && $lang !== Language::ITALIAN 
+            && $lang !== Language::JAPANESE)
+                throw new \Exception("Unknown Language");
 
+        if ($type != NewsType::SAVETHEWORLD && $type != NewsType::BATTLEROYALE)
+            throw new \Exception("Only SaveTheWorld and BattleRoyale news are currently supported");
 
         try {
             $data = FortniteClient::sendFortniteGetRequest(FortniteClient::FORTNITE_NEWS_API . 'pages/fortnite-game',
-                $this->access_token, array('Accept-Language' => $lang));
+                $this->access_token, ['Accept-Language' => $lang]);
 
             $data = $data->$type->news->messages;
 
@@ -38,7 +46,7 @@ class News
 
             return $news;
         } catch (GuzzleException $e) {
-            if ($e->getResponse()->getStatusCode() == 404) throw new Exception('Unable to obtain news.');
+            if ($e->getResponse()->getStatusCode() == 404) throw new \Exception('Unable to obtain news.');
             throw $e;
         }
     }

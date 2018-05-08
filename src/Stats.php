@@ -2,10 +2,12 @@
 namespace Fortnite;
 
 use Fortnite\FortniteClient;
+use Fortnite\Account;
+
 use Fortnite\Model\FortniteStats;
+
 use Fortnite\Exception\UserNotFoundException;
 use Fortnite\Exception\StatsNotFoundException;
-use Fortnite\Account;
 
 use GuzzleHttp\Exception\GuzzleException;
 
@@ -40,13 +42,11 @@ class Stats {
     private function fetch($account_id) {
         if (!$account_id) return null;
 
-
-
         $data = FortniteClient::sendFortniteGetRequest(FortniteClient::FORTNITE_API . 'stats/accountId/' . $account_id . '/bulk/window/alltime',
                                                      $this->access_token);
 
         // Remove - from account ID and get it's display name
-        $this->display_name = Account::getDisplayNameFromID(str_replace("-","",$this->account_id),$this->access_token);
+        $this->display_name = Account::getDisplayNameFromID(str_replace("-","",$this->account_id), $this->access_token);
         //if (!count($data)) throw new StatsNotFoundException('Unable to find any stats for account id '. $account_id);
 
         // Loop over all the stat objects and compile them together cleanly

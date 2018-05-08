@@ -47,6 +47,7 @@ class FortniteClient {
      */
     public static function sendUnrealClientGetRequest($endpoint, $authorization = self::EPIC_LAUNCHER_AUTHORIZATION, $oauth = false) {
         $client = new Client();
+
         try {
             $response = $client->get($endpoint, [
                 'headers' => [
@@ -54,6 +55,7 @@ class FortniteClient {
                     'Authorization' => (!$oauth) ? 'basic ' . $authorization : 'bearer ' . $authorization
                 ]
             ]);
+            
             return json_decode($response->getBody()->getContents());
         } catch (GuzzleException $e) {
             throw $e; //Throw exception back up to caller
@@ -90,16 +92,18 @@ class FortniteClient {
      * Sends a GET request as the Fortnite client.
      * @param  string $endpoint     API endpoint to request
      * @param  string $access_token OAuth2 access token
-     * @param  array  $extraheaders (optional)
+     * @param  array  $extra_headers (optional)
      * @return object               Decoded JSON response body
      */
-    public static function sendFortniteGetRequest($endpoint, $access_token,$extraheaders = array()) {
+    public static function sendFortniteGetRequest($endpoint, $access_token, $extra_headers = array()) {
         $client = new Client();
+
         $headers = [
             'User-Agent' => 'game=Fortnite, engine=UE4, build=++Fortnite+Release-2.5-CL-3889387, netver=3886413',
             'Authorization' => 'bearer ' . $access_token
         ];
-        $headers = array_merge($headers,$extraheaders);
+
+        $headers = array_merge($headers, $extra_headers);
         try {
             $response = $client->get($endpoint, [
                 'headers' => $headers
@@ -109,8 +113,6 @@ class FortniteClient {
         } catch (GuzzleException $e) {
             throw $e; //Throw exception back up to caller
         }
-
-
     }
 
 
@@ -132,11 +134,11 @@ class FortniteClient {
                     'Authorization' => 'bearer ' . $access_token
                 ]
             ]);
+
+            return json_decode($response->getBody()->getContents());      
         } catch (GuzzleException$e) {
             throw $e; //Throw exception back up to caller
         }
 
-
-        return json_decode($response->getBody()->getContents());
     }
 }

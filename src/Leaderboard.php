@@ -2,11 +2,14 @@
 namespace Fortnite;
 
 use Fortnite\FortniteClient;
-use Fortnite\Model\FortniteLeaderboard;
-use Fortnite\Exception\UserNotFoundException;
-use Fortnite\Exception\StatsNotFoundException;
 use Fortnite\Platform;
 use Fortnite\Mode;
+
+use Fortnite\Model\FortniteLeaderboard;
+
+
+use Fortnite\Exception\UserNotFoundException;
+use Fortnite\Exception\StatsNotFoundException;
 
 use GuzzleHttp\Exception\GuzzleException;
 
@@ -16,7 +19,6 @@ class Leaderboard
 
     public function __construct($access_token) {
         $this->access_token = $access_token;
-        $this->account = new Account($this->access_token);
     }
 
     /**
@@ -25,12 +27,17 @@ class Leaderboard
      * @param  string $type (SOLO,DUO, SQUAD)
      * @return object           New instance of Fortnite\Leaderboard
      */
-    public function getLeaderboardData($platform, $type)
+    public function get($platform, $type)
     {
-        if ($platform != PlayablePlatform::PC && $platform != PlayablePlatform::PS4 && $platform != PlayablePlatform::XBOX1)
-            throw new Exception('Please select a platform');
-        if ($type != Mode::DUO && $type != Mode::SOLO && $type != Mode::SQUAD)
-            throw new Exception('Please select a game mode');
+        if ($platform !== PlayablePlatform::PC 
+            && $platform !== PlayablePlatform::PS4 
+            && $platform !== PlayablePlatform::XBOX1)
+                throw new \Exception('Please select a platform');
+
+        if ($type !== Mode::DUO 
+            && $type !== Mode::SOLO 
+            && $type !== Mode::SQUAD)
+                throw new \Exception('Please select a game mode');
 
         try {
             $data = FortniteClient::sendFortnitePostRequest(FortniteClient::FORTNITE_API . "leaderboards/type/global/stat/br_placetop1_{$platform}_m0{$type}/window/weekly?ownertype=1&itemsPerPage=50",
@@ -39,21 +46,24 @@ class Leaderboard
 
 
             $ids = array();
-           foreach ($entries as $entry)
+            foreach ($entries as $entry)
             {
-                $entry->accountId = str_replace("-","",$entry->accountId);
+                $entry->accountId = str_replace("-", "", $entry->accountId);
                 array_push($ids, $entry->accountId);
             }
+
             $accounts = $this->account->getDisplayNamesFromID($ids);
 
-           foreach($accounts as $account)
-           {
-               foreach($entries as $entry)
-               {
-                   if ($entry->accountId == $account->id)
-                       $entry->displayName = $account->displayName;
-               }
-           }
+            foreach($accounts as $account)
+            {
+                foreach($entries as $entry)
+                {
+                    if ($entry->accountId == $account->id) {
+                        $entry->displayName = $account->displayName;
+                        break;
+                    }
+                }
+            }
 
             $leaderboard = [];
             foreach ($entries as $key => $stat) {

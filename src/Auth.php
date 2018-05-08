@@ -55,14 +55,14 @@ class Auth {
         ]);
 
         if (!$data->access_token) {
-            throw new Exception($data->errorMessage);
+            throw new \Exception($data->errorMessage);
         }
 
         // Now that we've got our Unreal Client launcher token, let's get an exchange token for Fortnite
         $data = FortniteClient::sendUnrealClientGetRequest(FortniteClient::EPIC_OAUTH_EXCHANGE_ENDPOINT, $data->access_token, true);
 
         if (!$data->code) {
-            throw new Exception($data->errorMessage);
+            throw new \Exception($data->errorMessage);
         }
 
         // Should be good. Let's get our tokens for the Fortnite API
@@ -74,7 +74,7 @@ class Auth {
         ], FortniteClient::FORTNITE_AUTHORIZATION);
 
         if (!$data->access_token) {
-            throw new Exception($data->errorMessage);
+            throw new \Exception($data->errorMessage);
         }
 
         return new self($data->access_token, $data->refresh_token, $data->account_id, $data->expires_in);
@@ -94,7 +94,7 @@ class Auth {
         ], FortniteClient::FORTNITE_AUTHORIZATION);
 
         if (!$data->access_token) {
-            throw new Exception($data->errorMessage);
+            throw new \Exception($data->errorMessage);
         }
 
        return new self($data->access_token, $data->refresh_token, $data->account_id, $data->expires_in);

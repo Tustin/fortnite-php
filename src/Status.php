@@ -2,7 +2,9 @@
 
 namespace Fortnite;
 
-use Fortnite;
+use Fortnite\FortniteClient;
+
+use GuzzleHttp\Exception\GuzzleException;
 
 class Status
 {
@@ -13,8 +15,7 @@ class Status
         $this->access_token = $access_token;
     }
 
-
-    public function getStatus()
+    public function get()
     {
         try {
             $data = FortniteClient::sendFortniteGetRequest(FortniteClient::FORTNITE_STATUS_API . 'service/bulk/status?serviceId=Fortnite',
@@ -22,7 +23,7 @@ class Status
 
             return $data[0]->status;
         } catch (GuzzleException $e) {
-            if ($e->getResponse()->getStatusCode() == 404) throw new Exception('Unable to obtain Fortnite status.');
+            if ($e->getResponse()->getStatusCode() == 404) throw new \Exception('Unable to obtain Fortnite status.');
             throw $e;
         }
     }

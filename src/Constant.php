@@ -1,7 +1,6 @@
 <?php
 namespace Fortnite;
 
-
 class Mode
 {
     const SOLO = "_p2";
@@ -22,7 +21,7 @@ class Language {
     const SPANISH = "es";
     const CHINESE = "zh";
     const FRENCH = "fr";
-    const ITALIEN = "it";
+    const ITALIAN = "it";
     const JAPANESE = "ja";
 }
 
