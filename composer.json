@@ -1,13 +1,17 @@
 {
     "name": "tustin/fortnite-php",
     "license": "MIT",
+    "description": "PHP wrapper for the official Fortnite API.",
+    "homepage": "https://github.com/Tustin/fortnite-php",
+    "keywords": ["fortnite", "api", "php"],
     "autoload": {
         "classmap": [
             "src/"
         ]
     },
     "require": {
-        "guzzlehttp/guzzle": "^6.3"
+        "guzzlehttp/guzzle": "^6.3",
+        "php": "^7.0"
     },
     "scripts": {
         "test": "php tests/auth.php"
