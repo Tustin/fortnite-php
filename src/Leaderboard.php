@@ -21,7 +21,6 @@ class Leaderboard
     public function __construct($access_token, Account $account)
     {
         $this->account = $account;
-        dump('account', $this->account);
         $this->access_token = $access_token;
     }
 
