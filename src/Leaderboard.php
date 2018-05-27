@@ -63,7 +63,7 @@ class Leaderboard
             foreach ($entries as $entry) {
                 foreach ($accounts as $account) {
                     if ($entry->accountId === $account->id) {
-                        $entry->displayName = $account->displayName;
+                        $entry->displayName = $account->displayName ?? null;
                         break;
                     }
                 }
