@@ -3,7 +3,8 @@ namespace Fortnite\Model;
 
 use Fortnite\Exception\InvalidStatException;
 
-class FortniteStats {
+class FortniteStats
+{
     public $wins = 0;
     public $top3 = 0;
     public $top5 = 0;
@@ -21,11 +22,12 @@ class FortniteStats {
     public $win_loss_ratio = 0;
 
 
-     /**
-     * Constructs a new Fortnite\Model\FortniteStats instance.
-     * @param array $stats   Array of mapped stats
-     */
-    public function __construct($stats) {
+    /**
+    * Constructs a new Fortnite\Model\FortniteStats instance.
+    * @param array $stats   Array of mapped stats
+    */
+    public function __construct($stats)
+    {
         foreach ($stats as $key => $value) {
             switch ($key) {
                 case "placetop1":
@@ -61,7 +63,9 @@ class FortniteStats {
                 case "minutesplayed":
                 $this->minutes_played = $value;
                 break;
-                case "lastmodified": break;
+                case "lastmodified":
+                $this->last_modified = $value;
+                break;
                 default:
                 throw new InvalidStatException('Stat name '. $key . ' is not supported'); // I expect a PR if someone runs into this exception
             }
@@ -69,8 +73,7 @@ class FortniteStats {
 
         // TODO: Cleanup
         $this->kill_death_per_game = ($this->matches_played === 0) ? 0 : round($this->kills / $this->matches_played, 2);
-        $this->score_per_match = ($this->matches_played === 0) ? 0 : round($this->score / $this->matches_played , 2);
+        $this->score_per_match = ($this->matches_played === 0) ? 0 : round($this->score / $this->matches_played, 2);
         $this->win_loss_ratio = ($this->matches_played === 0) ? 0 :  round($this->wins / $this->matches_played, 2);
     }
-
 }
