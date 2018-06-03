@@ -20,6 +20,7 @@ class FortniteStats
     public $kill_death_per_game = 0;
     public $score_per_match = 0;
     public $win_loss_ratio = 0;
+    public $last_modified = null;
 
 
     /**
