@@ -36,14 +36,14 @@ echo 'Sandy Ravage has won ' . $sandy->pc->solo->wins . ' solo games and ' . $sa
 ### Get Leaderboards
 ```php
 $auth = Auth::login('epic_email@domain.com','password');
-var_dump($auth->leaderboard->getLeaderboardData(Platform::PC, Mode::DUO)); 
+var_dump($auth->leaderboard->get(Platform::PC, Mode::DUO)); 
 
 ```
 
 ### Get News 
 ```php
 $auth = Auth::login('epic_email@domain.com','password');
-var_dump($auth->news->getNews(Language::ENGLISH,NewsType::BATTLEROYALE)); 
+var_dump($auth->news->get(NewsType::BATTLEROYALE,Language::ENGLISH)); 
 ```
 
 
@@ -51,7 +51,7 @@ var_dump($auth->news->getNews(Language::ENGLISH,NewsType::BATTLEROYALE));
 ### Get Store
 ```php
 $auth = Auth::login('epic_email@domain.com','password');
-var_dump($auth->store->getStore(Language::ENGLISH)); 
+var_dump($auth->store->get(Language::ENGLISH)); 
 ```
 
 ### Constants
