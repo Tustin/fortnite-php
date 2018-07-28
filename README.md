@@ -16,7 +16,7 @@ Create a basic test script to ensure everything was installed properly
 require_once 'vendor/autoload.php';
 
 use Fortnite\Auth;
-use Fortnite\PlayablePlatform;
+use Fortnite\Account;
 use Fortnite\Mode;
 use Fortnite\Language;
 use Fortnite\Platform;
