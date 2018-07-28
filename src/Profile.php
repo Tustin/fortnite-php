@@ -11,6 +11,7 @@ class Profile {
 
     public $stats;
     public $items;
+    public $challenges;
 
     /**
      * Constructs a new Fortnite\Profile instance.
@@ -23,6 +24,8 @@ class Profile {
         $data = $this->fetch();
         $this->items = new Items($data->items);
         $this->stats = new Stats($access_token, $account_id);
+        $this->challenges = new Challenges($this->access_token, $data->items);
+
     }
 
     /**

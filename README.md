@@ -19,7 +19,6 @@ use Fortnite\Auth;
 use Fortnite\PlayablePlatform;
 use Fortnite\Mode;
 use Fortnite\Language;
-use Fortnite\NewsType;
 use Fortnite\Platform;
 
 // Authenticate
@@ -43,7 +42,7 @@ var_dump($auth->leaderboard->get(Platform::PC, Mode::DUO));
 ### Get News 
 ```php
 $auth = Auth::login('epic_email@domain.com','password');
-var_dump($auth->news->get(NewsType::BATTLEROYALE,Language::ENGLISH)); 
+var_dump($auth->news->get(News::BATTLEROYALE, Language::ENGLISH)); 
 ```
 
 
