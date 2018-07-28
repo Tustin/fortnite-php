@@ -53,6 +53,16 @@ $auth = Auth::login('epic_email@domain.com','password');
 var_dump($auth->store->get(Language::ENGLISH)); 
 ```
 
+### Get Challenges
+```php
+$auth = Auth::login('epic_email@domain.com','password');
+// All weekly challenges
+var_dump($auth->profile->challenges->getWeeklys()); 
+
+// Or just get a specific week (in this example, week 1)
+var_dump($auth->profile->challenges->getWeekly(1)); 
+```
+
 ### Constants
 ```
 Platform [ PC, PS4, XB1 ]
