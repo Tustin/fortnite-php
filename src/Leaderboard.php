@@ -32,12 +32,11 @@ class Leaderboard
      */
     public function get($platform, $type)
     {
-        if ($platform !== PlayablePlatform::PC
-            && $platform !== PlayablePlatform::PS4
-            && $platform !== PlayablePlatform::XBOX1) {
-            throw new \Exception('Please select a platform');
-        }
-
+        if ($platform !== Platform::PC 
+            && $platform !== Platform::PS4 
+            && $platform !== Platform::XBOX1)
+                throw new \Exception('Please select a platform');
+      
         if ($type !== Mode::DUO
             && $type !== Mode::SOLO
             && $type !== Mode::SQUAD) {

@@ -3,7 +3,6 @@ namespace Fortnite;
 
 use Fortnite\FortniteClient;
 use Fortnite\Language;
-use Fortnite\NewsType;
 
 use Fortnite\Model\FortniteNews;
 
@@ -11,6 +10,9 @@ use GuzzleHttp\Exception\GuzzleException;
 
 class News
 {
+    const BATTLEROYALE = "battleroyalenews";
+    const SAVETHEWORLD = "savetheworldnews";
+
     private $access_token;
 
     public function __construct($access_token)
@@ -21,16 +23,16 @@ class News
     public function get($type, $lang = Language::ENGLISH)
     {
         if ($lang !== Language::ENGLISH
-            && $lang !== Language::GERMAN 
-            && $lang !== Language::SPANISH 
-            && $lang !== Language::CHINESE 
-            && $lang !== Language::FRENCH 
-            && $lang !== Language::FRENCH 
-            && $lang !== Language::ITALIAN 
+            && $lang !== Language::GERMAN
+            && $lang !== Language::SPANISH
+            && $lang !== Language::CHINESE
+            && $lang !== Language::FRENCH
+            && $lang !== Language::FRENCH
+            && $lang !== Language::ITALIAN
             && $lang !== Language::JAPANESE)
                 throw new \Exception("Unknown Language");
 
-        if ($type != NewsType::SAVETHEWORLD && $type != NewsType::BATTLEROYALE)
+        if ($type != Self::SAVETHEWORLD && $type != Self::BATTLEROYALE)
             throw new \Exception("Only SaveTheWorld and BattleRoyale news are currently supported");
 
         try {

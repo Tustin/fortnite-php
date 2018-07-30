@@ -14,6 +14,9 @@ class Auth {
     public $profile;
 
 
+
+    // TODO: Probably want to lazy load all of these object initializations. Although currently I'm not sure how to go about that with PHP.
+    // @Tustin 7/28/2018
     /**
      * Constructs a new Fortnite\Auth instance.
      * @param string $access_token  OAuth2 access token
