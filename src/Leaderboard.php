@@ -16,8 +16,11 @@ use GuzzleHttp\Exception\GuzzleException;
 class Leaderboard
 {
     private $access_token;
+    private $account;
 
-    public function __construct($access_token) {
+    public function __construct($access_token, Account $account)
+    {
+        $this->account = $account;
         $this->access_token = $access_token;
     }
 
@@ -33,33 +36,33 @@ class Leaderboard
             && $platform !== Platform::PS4 
             && $platform !== Platform::XBOX1)
                 throw new \Exception('Please select a platform');
-
-        if ($type !== Mode::DUO 
-            && $type !== Mode::SOLO 
-            && $type !== Mode::SQUAD)
-                throw new \Exception('Please select a game mode');
+      
+        if ($type !== Mode::DUO
+            && $type !== Mode::SOLO
+            && $type !== Mode::SQUAD) {
+            throw new \Exception('Please select a game mode');
+        }
 
         try {
-            $data = FortniteClient::sendFortnitePostRequest(FortniteClient::FORTNITE_API . "leaderboards/type/global/stat/br_placetop1_{$platform}_m0{$type}/window/weekly?ownertype=1&itemsPerPage=50",
-                $this->access_token);
+            $data = FortniteClient::sendFortnitePostRequest(
+                FortniteClient::FORTNITE_API . "leaderboards/type/global/stat/br_placetop1_{$platform}_m0{$type}/window/weekly?ownertype=1&itemsPerPage=50",
+                $this->access_token
+            );
             $entries = $data->entries;
 
 
             $ids = array();
-            foreach ($entries as $entry)
-            {
+            foreach ($entries as $entry) {
                 $entry->accountId = str_replace("-", "", $entry->accountId);
                 array_push($ids, $entry->accountId);
             }
 
             $accounts = $this->account->getDisplayNamesFromID($ids);
 
-            foreach($accounts as $account)
-            {
-                foreach($entries as $entry)
-                {
-                    if ($entry->accountId == $account->id) {
-                        $entry->displayName = $account->displayName;
+            foreach ($entries as $entry) {
+                foreach ($accounts as $account) {
+                    if ($entry->accountId === $account->id) {
+                        $entry->displayName = $account->displayName ?? null;
                         break;
                     }
                 }
@@ -72,9 +75,10 @@ class Leaderboard
 
             return $leaderboard;
         } catch (GuzzleException $e) {
-            if ($e->getResponse()->getStatusCode() == 404) throw new LeaderboardNotFoundException('Could not get leaderboards.');
+            if ($e->getResponse()->getStatusCode() == 404) {
+                throw new LeaderboardNotFoundException('Could not get leaderboards.');
+            }
             throw $e;
         }
     }
-
 }
