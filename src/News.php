@@ -23,16 +23,16 @@ class News
     public function get($type, $lang = Language::ENGLISH)
     {
         if ($lang !== Language::ENGLISH
-            && $lang !== Language::GERMAN 
-            && $lang !== Language::SPANISH 
-            && $lang !== Language::CHINESE 
-            && $lang !== Language::FRENCH 
-            && $lang !== Language::FRENCH 
-            && $lang !== Language::ITALIAN 
+            && $lang !== Language::GERMAN
+            && $lang !== Language::SPANISH
+            && $lang !== Language::CHINESE
+            && $lang !== Language::FRENCH
+            && $lang !== Language::FRENCH
+            && $lang !== Language::ITALIAN
             && $lang !== Language::JAPANESE)
                 throw new \Exception("Unknown Language");
 
-        if ($type != SAVETHEWORLD && $type != BATTLEROYALE)
+        if ($type != Self::SAVETHEWORLD && $type != Self::BATTLEROYALE)
             throw new \Exception("Only SaveTheWorld and BattleRoyale news are currently supported");
 
         try {
