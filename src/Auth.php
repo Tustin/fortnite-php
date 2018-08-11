@@ -7,6 +7,7 @@ use Fortnite\Status;
 
 class Auth {
     private $access_token;
+    private $in_app_id;
     private $refresh_token;
     private $account_id;
     private $expires_in;
@@ -24,14 +25,15 @@ class Auth {
      * @param string $account_id    Unreal Engine account id
      * @param string $expires_in    OAuth2 token expiration time
      */
-    private function __construct($access_token, $refresh_token, $account_id, $expires_in) {
+    private function __construct($access_token, $in_app_id, $refresh_token, $account_id, $expires_in) {
         $this->access_token = $access_token;
+        $this->in_app_id = $in_app_id;
         $this->refresh_token = $refresh_token;
         $this->account_id = $account_id;
         $this->expires_in = $expires_in;
         $this->profile = new Profile($this->access_token, $this->account_id);
         $this->account = new Account($this->access_token);
-        $this->leaderboard  = new Leaderboard($this->access_token, $this->account);
+        $this->leaderboard  = new Leaderboard($this->access_token, $this->in_app_id, $this->account);
         $this->store = new Store($this->access_token);
         $this->news = new News($this->access_token);
         $this->status = new Status($this->access_token);
@@ -80,7 +82,7 @@ class Auth {
             throw new \Exception($data->errorMessage);
         }
 
-        return new self($data->access_token, $data->refresh_token, $data->account_id, $data->expires_in);
+        return new self($data->access_token, $data->in_app_id, $data->refresh_token, $data->account_id, $data->expires_in);
     }
 
     /**
@@ -100,7 +102,7 @@ class Auth {
             throw new \Exception($data->errorMessage);
         }
 
-       return new self($data->access_token, $data->refresh_token, $data->account_id, $data->expires_in);
+       return new self($data->access_token, $data->in_app_id, $data->refresh_token, $data->account_id, $data->expires_in);
     }
 
     /**
@@ -125,5 +127,9 @@ class Auth {
      */
     public function accessToken() {
         return $this->access_token;
+    }
+
+    public function inAppId() {
+        return $this->in_app_id;
     }
 }

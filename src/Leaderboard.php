@@ -16,11 +16,14 @@ use GuzzleHttp\Exception\GuzzleException;
 class Leaderboard
 {
     private $access_token;
+    private $in_app_id;
     private $account;
 
-    public function __construct($access_token, Account $account)
+
+    public function __construct($access_token, $in_app_id, Account $account)
     {
         $this->account = $account;
+        $this->in_app_id = $in_app_id;
         $this->access_token = $access_token;
     }
 
@@ -44,9 +47,16 @@ class Leaderboard
         }
 
         try {
+            $data_cohort = FortniteClient::sendFortniteGetRequest(
+                FortniteClient::FORTNITE_API . "game/v2/leaderboards/cohort/$this->in_app_id?playlist={$platform}_m0{$type}",
+                $this->access_token, array('Content-Type: application/json')
+            );
+
+
+
             $data = FortniteClient::sendFortnitePostRequest(
                 FortniteClient::FORTNITE_API . "leaderboards/type/global/stat/br_placetop1_{$platform}_m0{$type}/window/weekly?ownertype=1&itemsPerPage=50",
-                $this->access_token
+                $this->access_token, $data_cohort->cohortAccounts
             );
             $entries = $data->entries;
 
