@@ -51,7 +51,7 @@ class FortniteClient {
         try {
             $response = $client->get($endpoint, [
                 'headers' => [
-                    'User-Agent' => 'game=UELauncher, engine=UE4, build=7.3.1-3881656+++Portal+Release-Live',
+                    'User-Agent' => 'game=UELauncher, engine=UE4, build=7.14.2-4231683+++Portal+Release-Live',
                     'Authorization' => (!$oauth) ? 'basic ' . $authorization : 'bearer ' . $authorization
                 ]
             ]);
@@ -77,7 +77,7 @@ class FortniteClient {
             $response = $client->post($endpoint, [
                 'form_params' => $params,
                 'headers' => [
-                    'User-Agent' => 'game=UELauncher, engine=UE4, build=7.3.1-3881656+++Portal+Release-Live',
+                    'User-Agent' => 'game=UELauncher, engine=UE4, build=7.14.2-4231683+++Portal+Release-Live',
                     'Authorization' => (!$oauth) ? 'basic ' . $authorization : 'bearer ' . $authorization
                 ]
             ]);
@@ -99,7 +99,7 @@ class FortniteClient {
         $client = new Client();
 
         $headers = [
-            'User-Agent' => 'game=Fortnite, engine=UE4, build=++Fortnite+Release-2.5-CL-3889387, netver=3886413',
+            'User-Agent' => 'Fortnite/++Fortnite+Release-5.20-CL-4259375 Windows/10.0.17728.1.256.64bit',
             'Authorization' => 'bearer ' . $access_token
         ];
 
@@ -130,7 +130,7 @@ class FortniteClient {
              $response = $client->post($endpoint, [
                 'json' => $params,
                 'headers' => [
-                    'User-Agent' => 'game=Fortnite, engine=UE4, build=++Fortnite+Release-2.5-CL-3889387, netver=3886413',
+                    'User-Agent' => 'Fortnite/++Fortnite+Release-5.20-CL-4259375 Windows/10.0.17728.1.256.64bit',
                     'Authorization' => 'bearer ' . $access_token
                 ]
             ]);
