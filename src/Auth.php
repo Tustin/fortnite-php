@@ -4,6 +4,7 @@ namespace Fortnite;
 use Fortnite\FortniteClient;
 use Fortnite\Profile;
 use Fortnite\Status;
+use Fortnite\Exception\TwoFactorAuthRequiredException;
 
 class Auth {
     private $access_token;
@@ -49,24 +50,43 @@ class Auth {
      *
      * @return     self       New Auth instance
      */
-    public static function login($email, $password) {
-        // First, we need to get a token for the Unreal Engine client
-        $data = FortniteClient::sendUnrealClientPostRequest(FortniteClient::EPIC_OAUTH_TOKEN_ENDPOINT, [
-            'grant_type' => 'password',
-            'username' => $email,
-            'password' => $password,
-            'includePerms' => false, // We don't need these here
-            'token_type' => 'eg1'
-        ]);
+    public static function login($email, $password, $challenge = '', $code = '') {
 
-        if (!$data->access_token) {
+        $requestParams = [
+            'includePerms' => 'false', // We don't need these here
+            'token_type' => 'eg1'
+        ];
+
+        if (empty($challenge) && empty($code)) {
+            // Regular login
+            $requestParams = array_merge($requestParams, [
+                'grant_type' => 'password',
+                'username' => $email,
+                'password' => $password,
+            ]);
+        } else {
+            $requestParams = array_merge($requestParams, [
+                'grant_type' => 'otp',
+                'otp' => $code,
+                'challenge' => $challenge,
+            ]);
+        }
+
+        // First, we need to get a token for the Unreal Engine client
+        $data = FortniteClient::sendUnrealClientPostRequest(FortniteClient::EPIC_OAUTH_TOKEN_ENDPOINT, $requestParams);
+
+        if (!isset($data->access_token)) {
+            if ($data->errorCode === 'errors.com.epicgames.common.two_factor_authentication.required') {
+                throw new TwoFactorAuthRequiredException($data->challenge);
+            }
+
             throw new \Exception($data->errorMessage);
         }
 
         // Now that we've got our Unreal Client launcher token, let's get an exchange token for Fortnite
         $data = FortniteClient::sendUnrealClientGetRequest(FortniteClient::EPIC_OAUTH_EXCHANGE_ENDPOINT, $data->access_token, true);
 
-        if (!$data->code) {
+        if (!isset($data->code)) {
             throw new \Exception($data->errorMessage);
         }
 
@@ -78,7 +98,7 @@ class Auth {
             'token_type' => 'eg1'
         ], FortniteClient::FORTNITE_AUTHORIZATION);
 
-        if (!$data->access_token) {
+        if (!isset($data->access_token)) {
             throw new \Exception($data->errorMessage);
         }
 

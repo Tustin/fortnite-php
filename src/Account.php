@@ -21,7 +21,7 @@ class Account {
 
             return $data[0]->displayName;
         } catch (GuzzleException $e) {
-            if ($e->getResponse()->getStatusCode() == 404) throw new Exception('Could not get display name of acccount id ' . $id);
+            if ($e->getResponse()->getStatusCode() == 404) throw new Exception('Could not get display name of account id ' . $id);
             throw $e;
         }
     }
@@ -33,8 +33,12 @@ class Account {
 
             return $data;
         } catch (GuzzleException $e) {
-            if ($e->getResponse()->getStatusCode() == 404) throw new \Exception('Could not get display name of acccount id ' . $id);
+            if ($e->getResponse()->getStatusCode() == 404) throw new \Exception('Could not get display name of account id ' . $id);
             throw $e;
         }
+    }
+
+    public function killSession() {
+        FortniteClient::sendFortniteDeleteRequest(FortniteClient::FORTNITE_ACCOUNT_API . "oauth/sessions/kill/" . $this->access_token, $this->access_token);
     }
 }

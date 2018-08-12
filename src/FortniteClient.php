@@ -37,6 +37,11 @@ class FortniteClient {
 
 
 
+    const UNREAL_CLIENT_USER_AGENT      = "game=UELauncher, engine=UE4, build=7.14.2-4231683+++Portal+Release-Live";
+    const FORTNITE_USER_AGENT           = "Fortnite/++Fortnite+Release-5.20-CL-4259375 Windows/10.0.17728.1.256.64bit";
+
+
+
 
     /**
      * Sends a GET request as the Unreal Engine Client.
@@ -51,7 +56,7 @@ class FortniteClient {
         try {
             $response = $client->get($endpoint, [
                 'headers' => [
-                    'User-Agent' => 'game=UELauncher, engine=UE4, build=7.14.2-4231683+++Portal+Release-Live',
+                    'User-Agent' => self::UNREAL_CLIENT_USER_AGENT,
                     'Authorization' => (!$oauth) ? 'basic ' . $authorization : 'bearer ' . $authorization
                 ]
             ]);
@@ -71,14 +76,15 @@ class FortniteClient {
      * @return object                 Decoded JSON response body
      */
     public static function sendUnrealClientPostRequest($endpoint, $params = null, $authorization = self::EPIC_LAUNCHER_AUTHORIZATION, $oauth = false) {
-        $client = new Client();
+        $client = new Client(['http_errors' => false]);
 
         try {
             $response = $client->post($endpoint, [
                 'form_params' => $params,
                 'headers' => [
-                    'User-Agent' => 'game=UELauncher, engine=UE4, build=7.14.2-4231683+++Portal+Release-Live',
-                    'Authorization' => (!$oauth) ? 'basic ' . $authorization : 'bearer ' . $authorization
+                    'User-Agent' => self::UNREAL_CLIENT_USER_AGENT,
+                    'Authorization' => (!$oauth) ? 'basic ' . $authorization : 'bearer ' . $authorization,
+                    'X-Epic-Device-ID' => self::generateDeviceId()
                 ]
             ]);
 
@@ -99,7 +105,7 @@ class FortniteClient {
         $client = new Client();
 
         $headers = [
-            'User-Agent' => 'Fortnite/++Fortnite+Release-5.20-CL-4259375 Windows/10.0.17728.1.256.64bit',
+            'User-Agent' => self::FORTNITE_USER_AGENT,
             'Authorization' => 'bearer ' . $access_token
         ];
 
@@ -130,7 +136,7 @@ class FortniteClient {
              $response = $client->post($endpoint, [
                 'json' => $params,
                 'headers' => [
-                    'User-Agent' => 'Fortnite/++Fortnite+Release-5.20-CL-4259375 Windows/10.0.17728.1.256.64bit',
+                    'User-Agent' => self::FORTNITE_USER_AGENT,
                     'Authorization' => 'bearer ' . $access_token
                 ]
             ]);
@@ -140,5 +146,37 @@ class FortniteClient {
             throw $e; //Throw exception back up to caller
         }
 
+    }
+
+    public static function sendFortniteDeleteRequest($endpoint, $access_token) {
+        $client = new Client();
+
+        try {
+             $response = $client->delete($endpoint, [
+                'json' => $params,
+                'headers' => [
+                    'User-Agent' => self::FORTNITE_USER_AGENT,
+                    'Authorization' => 'bearer ' . $access_token
+                ]
+            ]);
+
+            return json_decode($response->getBody()->getContents());      
+        } catch (GuzzleException$e) {
+            throw $e; //Throw exception back up to caller
+        }
+
+    }
+
+    private static function generateSequence($length) {
+        return strtoupper((bin2hex(random_bytes($length / 2))));
+    }
+
+    public static function generateDeviceId() {
+        return sprintf('%s-%s-%s-%s-%s',
+        self::generateSequence(8), 
+        self::generateSequence(4), 
+        self::generateSequence(4), 
+        self::generateSequence(4), 
+        self::generateSequence(12));
     }
 }
