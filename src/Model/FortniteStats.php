@@ -73,6 +73,7 @@ class FortniteStats
         }
 
         // TODO: Cleanup
+		$this->kill_death_ratio = ($this->matches_played - $this->wins === 0) ? 0 : round($this->kills / ($this->matches_played - $this->wins), 2);
         $this->kill_death_per_game = ($this->matches_played === 0) ? 0 : round($this->kills / $this->matches_played, 2);
         $this->score_per_match = ($this->matches_played === 0) ? 0 : round($this->score / $this->matches_played, 2);
         $this->win_loss_ratio = ($this->matches_played === 0) ? 0 :  round($this->wins / $this->matches_played, 2);
