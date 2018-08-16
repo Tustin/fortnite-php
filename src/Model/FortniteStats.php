@@ -6,6 +6,7 @@ use Fortnite\Exception\InvalidStatException;
 class FortniteStats
 {
     public $wins = 0;
+    public $losses = 0;
     public $top3 = 0;
     public $top5 = 0;
     public $top6 = 0;
@@ -16,12 +17,11 @@ class FortniteStats
     public $matches_played = 0;
     public $minutes_played = 0;
     public $score = 0;
-    public $kill_death_ratio = 0;
-    public $kill_death_per_game = 0;
+    public $kills_per_match = 0;
     public $score_per_match = 0;
-    public $win_loss_ratio = 0;
+    public $kill_death_ratio = 0;
+    public $wins_ratio = 0;
     public $last_modified = null;
-
 
     /**
     * Constructs a new Fortnite\Model\FortniteStats instance.
@@ -73,9 +73,10 @@ class FortniteStats
         }
 
         // TODO: Cleanup
-		$this->kill_death_ratio = ($this->matches_played - $this->wins === 0) ? 0 : round($this->kills / ($this->matches_played - $this->wins), 2);
-        $this->kill_death_per_game = ($this->matches_played === 0) ? 0 : round($this->kills / $this->matches_played, 2);
+        $this->losses = ($this->matches_played === 0) ? 0 : $this->matches_played - $this->wins;
+        $this->kills_per_match = ($this->matches_played === 0) ? 0 : round($this->kills / $this->matches_played, 2);
         $this->score_per_match = ($this->matches_played === 0) ? 0 : round($this->score / $this->matches_played, 2);
-        $this->win_loss_ratio = ($this->matches_played === 0) ? 0 :  round($this->wins / $this->matches_played, 2);
+        $this->kill_death_ratio = ($this->matches_played - $this->wins === 0) ? 0 : round($this->kills / ($this->matches_played - $this->wins), 2);
+        $this->wins_ratio = ($this->matches_played === 0) ? 0 :  round(100 * $this->wins / ($this->wins + $this->losses), 2);
     }
 }
