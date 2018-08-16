@@ -5,9 +5,7 @@
     "homepage": "https://github.com/Tustin/fortnite-php",
     "keywords": ["fortnite", "api", "php"],
     "autoload": {
-        "classmap": [
-            "src/"
-        ]
+        "psr-4": {"Fortnite\\": "src/"}
     },
     "require": {
         "guzzlehttp/guzzle": "^6.3",
