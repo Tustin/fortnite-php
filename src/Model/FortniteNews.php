@@ -2,11 +2,11 @@
 
 namespace Fortnite\Model;
 
-
 class FortniteNews
 {
     public $image = null;
     public $hidden = null;
+    public $spotlight = null;
     public $title = null;
 
     /**
@@ -30,10 +30,13 @@ class FortniteNews
                 case "body":
                     $this->body = html_entity_decode($value);
                     break;
+                case "spotlight":
+                    $this->spotlight = $value;
+                    break;
                 case "_type":
                     break;
                 default:
-                    throw new Exception('News name ' . $key . ' is not supported');
+                    throw new \Exception('News name ' . $key . ' is not supported');
             }
         }
 
