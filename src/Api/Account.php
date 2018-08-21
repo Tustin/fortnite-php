@@ -7,7 +7,8 @@ use Fortnite\Api\Profile;
 
 class Account extends AbstractApi {
 
-    const ACCOUNT_API          = "https://account-public-service-prod03.ol.epicgames.com/account/api/";
+    const ACCOUNT_API   = 'https://account-public-service-prod03.ol.epicgames.com/account/api/';
+    const FRIENDS_API   = 'https://friends-public-service-prod06.ol.epicgames.com/friends/api/public/friends/';
 
     public function __construct(Client $client) 
     {
@@ -27,9 +28,24 @@ class Account extends AbstractApi {
         return new Profile($this->client, "");
     }
 
-    public function friends() {
-        // $data = FortniteClient::sendUnrealClientGetRequest(FortniteClient::EPIC_FRIENDS_ENDPOINT . $this->account_id, $this->access_token, true);
+    public function friends() : array
+    {
+        $returnFriends = [];
+        $friends = $this->get(self::FRIENDS_API . $this->client->accountId());
 
-        // return $data;
+        foreach ($friends as $friend) {
+            $accountInfo = $this->get(self::ACCOUNT_API . 'public/account', [
+                'accountId' => $friend->accountId
+            ])[0];
+
+            // This can happen for some reason. Probably want to try to still return this user but for now, skip them.
+            if (!isset($accountInfo->displayName)) {
+                continue;
+            }
+
+            $returnFriends[] = new Profile($this->client, $accountInfo->displayName, $friend->accountId);
+        }
+
+        return $returnFriends;
     }
 }

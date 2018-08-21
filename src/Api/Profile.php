@@ -19,37 +19,49 @@ class Profile extends AbstractApi {
     private $stats;
     public $challenges;
 
-    public function __construct(Client $client, string $displayName) 
+    public function __construct(Client $client, string $displayName, string $accountId = null) 
     {
         parent::__construct($client);
 
         $this->displayName = $displayName;
 
-        // If the current Profile isn't for the logged in user, we need to grab their id.
-        if ($this->displayName() !== $client->displayName()) {
-            $this->accountId = $this->lookup()->id;
+        if ($accountId != null) {
+            $this->accountId = $accountId;
         } else {
-            $this->accountId = $client->accountId();
+            // If the current Profile isn't for the logged in user, we need to grab their id.
+            if ($this->displayName() !== $client->displayName()) {
+                $this->accountId = $this->lookup()->id;
+            } else {
+                $this->accountId = $client->accountId();
+            }
         }
     }
 
+    /**
+     * Gets the user's display name.
+     *
+     * @return string The display name.
+     */
     public function displayName() : string
     {
         return $this->displayName;
     }
 
+    /**
+     * Gets the user's account ID.
+     *
+     * @return string The account ID.
+     */
     public function accountId() : string
     {
         return $this->accountId;
     }
 
-    private function lookup() : object
-    {
-        return $this->get(self::PERSONA_API . 'public/account/lookup', [
-            'q' => $this->displayName()
-        ]);
-    }
-
+    /**
+     * Gets the user's profile information.
+     *
+     * @return object Profile information.
+     */
     public function info() : object 
     {
         if ($this->profile === null) {
@@ -82,11 +94,41 @@ class Profile extends AbstractApi {
         return $returnItems;
     }
 
+    /**
+     * Gets the user's PS4 stats.
+     *
+     * @return Platform
+     */
     public function ps4() : Platform
     {
         return new Platform($this->client, $this->parseStats('ps4'));
     }
+    
+    /**
+     * Gets the user's Xbox One stats.
+     *
+     * @return Platform
+     */
+    public function xboxOne() : Platform
+    {
+        return new Platform($this->client, $this->parseStats('xb1'));
+    }
 
+    /**
+     * Gets the user's PC stats.
+     *
+     * @return Platform
+     */
+    public function pc() : Platform
+    {
+        return new Platform($this->client, $this->parseStats('pc'));
+    }
+
+    /**
+     * Gets the user's stats raw information.
+     *
+     * @return array
+     */
     public function stats() : array
     {
         if ($this->stats === null) {
@@ -96,6 +138,33 @@ class Profile extends AbstractApi {
         return $this->stats;
     }
 
+
+    /**
+     * Adds the user as a friend.
+     *
+     * @return void
+     */
+    public function add() : void
+    {
+        $this->post(sprintf(Account::FRIENDS_API . '%s/%s', $this->client->accountId(), $this->accountId), []);
+    }
+    
+    /**
+     * Removes the user as a friend.
+     *
+     * @return void
+     */
+    public function remove() : void
+    {
+        $this->delete(sprintf(Account::FRIENDS_API . '%s/%s', $this->client->accountId(), $this->accountId));
+    }
+
+    /**
+     * Parses the user's stats based on Platform.
+     *
+     * @param string $platform The Platform (ps4/xb1/pc)
+     * @return array
+     */
     private function parseStats(string $platform) : array 
     {
         $finalStats = [];
@@ -108,5 +177,19 @@ class Profile extends AbstractApi {
 
         return $finalStats;
 
+    }
+
+    /**
+     * Looks up the user's account information using the display name.
+     * 
+     * This is required for getting a user's account id so their stats can be searched.
+     *
+     * @return object
+     */
+    private function lookup() : object
+    {
+        return $this->get(self::PERSONA_API . 'public/account/lookup', [
+            'q' => $this->displayName()
+        ]);
     }
 }

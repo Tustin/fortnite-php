@@ -9,6 +9,7 @@ use Fortnite\Http\FortniteAuthMiddleware;
 
 use Fortnite\Api\Account;
 use Fortnite\Api\Profile;
+use Fortnite\Api\SystemFile;
 
 use GuzzleHttp\Middleware;
 
@@ -108,5 +109,23 @@ class Client {
     public function profile(string $username = null) : Profile
     {
         return new Profile($this, $username ?? $this->displayName());
+    }
+
+    public function session(string $sessionId) : Session
+    {
+        return new Session($this, $sessionId);
+    }
+
+    public function systemFiles() : array
+    {
+        $returnSystemFiles = [];
+        
+        $files = $this->httpClient()->get(SystemFile::SYSTEM_API);
+
+        foreach ($files as $file) {
+            $returnSystemFiles[] = new SystemFile($this, $file);
+        }
+
+        return $returnSystemFiles;
     }
 }
