@@ -10,6 +10,7 @@ use Fortnite\Http\FortniteAuthMiddleware;
 use Fortnite\Api\Account;
 use Fortnite\Api\Profile;
 use Fortnite\Api\SystemFile;
+use Fortnite\Api\News;
 
 use GuzzleHttp\Middleware;
 
@@ -127,5 +128,10 @@ class Client {
         }
 
         return $returnSystemFiles;
+    }
+
+    public function news() : News
+    {
+        return new News($this);
     }
 }
