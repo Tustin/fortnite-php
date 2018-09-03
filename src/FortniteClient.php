@@ -34,6 +34,7 @@ class FortniteClient {
     const FORTNITE_ACCOUNT_API          = "https://account-public-service-prod03.ol.epicgames.com/account/api/";
     const FORTNITE_NEWS_API             = "https://fortnitecontent-website-prod07.ol.epicgames.com/content/api/";
     const FORTNITE_STATUS_API           = "https://lightswitch-public-service-prod06.ol.epicgames.com/lightswitch/api/";
+    const FORTNITE_EULA_API             = "https://eulatracking-public-service-prod-m.ol.epicgames.com/eulatracking/api/";
 
 
 

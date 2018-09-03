@@ -10,8 +10,11 @@ use GuzzleHttp\Exception\GuzzleException;
 
 class Account {
 
-    public function __construct($access_token) {
+    private $account_id;
+
+    public function __construct($access_token,$account_id) {
         $this->access_token = $access_token;
+        $this->account_id = $account_id;
     }
 
     public static function getDisplayNameFromID($id, $access_token) {
@@ -40,5 +43,23 @@ class Account {
 
     public function killSession() {
         FortniteClient::sendFortniteDeleteRequest(FortniteClient::FORTNITE_ACCOUNT_API . "oauth/sessions/kill/" . $this->access_token, $this->access_token);
+    }
+
+    public function acceptEULA(){
+        try {
+            $data = FortniteClient::sendFortniteGetRequest(FortniteClient::FORTNITE_EULA_API . "public/agreements/fn/account/" . $this->account_id .'?locale=en-US',
+                $this->access_token);
+
+            FortniteClient::sendFortnitePostRequest(FortniteClient::FORTNITE_EULA_API . "public/agreements/fn/version/".$data->version."/account/".$this->account_id."/accept?locale=en",
+                $this->access_token,new \StdClass());
+
+            FortniteClient::sendFortnitePostRequest(FortniteClient::FORTNITE_API.'game/v2/grant_access/'.$this->account_id,
+                $this->access_token,new \StdClass());
+
+            return true;
+        } catch (GuzzleException $e) {
+            if ($e->getResponse()->getStatusCode() == 404) throw new \Exception('Could not read or accept EULA for account id ' . $this->account_id);
+            throw $e;
+        }
     }
 }

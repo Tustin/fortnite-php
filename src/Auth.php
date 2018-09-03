@@ -32,12 +32,15 @@ class Auth {
         $this->refresh_token = $refresh_token;
         $this->account_id = $account_id;
         $this->expires_in = $expires_in;
+        $this->account = new Account($this->access_token,$this->account_id);
+        $this->status = new Status($this->access_token);
+        if ($this->status->allowedToPlay() === false){
+            $this->account->acceptEULA();
+        }
         $this->profile = new Profile($this->access_token, $this->account_id);
-        $this->account = new Account($this->access_token);
         $this->leaderboard  = new Leaderboard($this->access_token, $this->in_app_id, $this->account);
         $this->store = new Store($this->access_token);
         $this->news = new News($this->access_token);
-        $this->status = new Status($this->access_token);
     }
 
     /**
