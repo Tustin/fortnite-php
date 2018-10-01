@@ -23,19 +23,22 @@ class Client {
     const EPIC_FRIENDS_ENDPOINT         = 'https://friends-public-service-prod06.ol.epicgames.com/friends/api/public/friends/';
 
     private $httpClient;
+    private $options;
 
     private $accountId;
     private $accountInfo;
 
-    public function __construct()
+    public function __construct($options = [])
     {
+        $this->options = $options;
         $handler = \GuzzleHttp\HandlerStack::create();
         $handler->push(Middleware::mapRequest(new FortniteAuthMiddleware));
 
-        $this->httpClient = new HttpClient(new \GuzzleHttp\Client(['handler' => $handler, 'verify' => false, 'proxy' => '127.0.0.1:8888']));
+        $newOptions = array_merge(['handler' => $handler], $this->options);
+
+        $this->httpClient = new HttpClient(new \GuzzleHttp\Client($newOptions));
     }
     
-
     /**
      * Login to Fortnite using Epic email and password.
      *
@@ -57,10 +60,13 @@ class Client {
         // TODO: 2FA checking here
         $this->accountId = $response->account_id;
 
+
         $handler = \GuzzleHttp\HandlerStack::create();
         $handler->push(Middleware::mapRequest(new TokenMiddleware($response->access_token, $response->refresh_token, $response->expires_in)));
 
-        $this->httpClient = new HttpClient(new \GuzzleHttp\Client(['handler' => $handler, 'verify' => false, 'proxy' => '127.0.0.1:8888']));
+        $newOptions = array_merge(['handler' => $handler], $this->options);
+
+        $this->httpClient = new HttpClient(new \GuzzleHttp\Client($newOptions));
     }
 
     /**

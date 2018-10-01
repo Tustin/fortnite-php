@@ -10,15 +10,16 @@ use GuzzleHttp\Message\Response;
 class HttpClient {
 
     private $client;
+    private $options;
 
     // Flags
     const FORM  = 1;
     const JSON  = 2;
     const MULTI = 4;
 
-    public function __construct(ClientInterface $client = null)
+    public function __construct(ClientInterface $client)
     {
-        $this->client = $client ?? new GuzzleClient(['verify' => false, 'proxy' => '127.0.0.1:8888']);
+        $this->client = $client;
     }
 
     public function get(string $path, array $body = [], array $headers = []) 
