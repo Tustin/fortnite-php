@@ -11,6 +11,7 @@ use Fortnite\Api\Account;
 use Fortnite\Api\Profile;
 use Fortnite\Api\SystemFile;
 use Fortnite\Api\News;
+use Fortnite\Api\Store;
 
 use GuzzleHttp\Middleware;
 
@@ -61,7 +62,6 @@ class Client {
 
         $this->httpClient = new HttpClient(new \GuzzleHttp\Client(['handler' => $handler, 'verify' => false, 'proxy' => '127.0.0.1:8888']));
     }
-
 
     /**
      * Gets the HttpClient.
@@ -133,5 +133,15 @@ class Client {
     public function news() : News
     {
         return new News($this);
+    }
+
+    /**
+     * Gets the Store Front.
+     *
+     * @return Store
+     */
+    public function store() : Store
+    {
+        return new Store($this);
     }
 }

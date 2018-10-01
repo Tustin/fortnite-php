@@ -12,7 +12,7 @@ class Item extends AbstractApi {
     private $item;
     private $id;
 
-    public function __construct(Client $client, string $id, object $item) 
+    public function __construct(Client $client, string $id, ?object $item) 
     {
         parent::__construct($client);
 
@@ -32,20 +32,20 @@ class Item extends AbstractApi {
 
     public function isFavorite() : bool
     {
-        return $this->info()->attributes->favorite;
+        return $this->info()->attributes->favorite ?? false;
     }
 
     public function xp() : int
     {
-        return $this->info()->attributes->xp;
+        return $this->info()->attributes->xp ?? 0;
     }
 
     public function level() : int
     {
-        return $this->info()->attributes->level;
+        return $this->info()->attributes->level ?? 0;
     }
 
-    public function info() : object
+    public function info() : ?object
     { 
         return $this->item;
     }
@@ -65,7 +65,7 @@ class Item extends AbstractApi {
     {
         $this->postJson(sprintf(self::PROFILE_API . '%s/client/EquipBattleRoyaleCustomization?profileId=athena', $this->client->getAccountId()), [
             'slotName' => $this->type(),
-            'itemToSlot' => $this->id(),
+            'itemToSlot' => $this->id(), // ?? is this right??
             'indexWithinSlot' => 0,
             'variantUpdates' => []
         ]);
