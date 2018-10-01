@@ -26,7 +26,7 @@ class Profile extends AbstractApi {
         $this->displayName = $displayName;
 
         if ($accountId != null) {
-            $this->accountId = $accountId;
+            $this->accountId = str_replace("-", "", $accountId);
         } else {
             // If the current Profile isn't for the logged in user, we need to grab their id.
             if ($this->displayName() !== $client->displayName()) {
@@ -44,6 +44,9 @@ class Profile extends AbstractApi {
      */
     public function displayName() : string
     {
+        if ($this->displayName == '') {
+            $this->displayName = $this->accountIdToDisplayName($this->accountId());
+        }
         return $this->displayName;
     }
 
@@ -191,5 +194,16 @@ class Profile extends AbstractApi {
         return $this->get(self::PERSONA_API . 'public/account/lookup', [
             'q' => $this->displayName()
         ]);
+    }
+    
+    private function accountIdToDisplayName(string $accountId) : string
+    {
+        $response = $this->get(Account::ACCOUNT_API . 'public/account', [
+            'accountId' => $accountId
+        ]);
+        
+        // TODO (Tustin): This can fail if the user doesn't have an Epic display name.
+        // A solution would be to enumerate over externalAuths and find their name from there.
+        return $response[0]->displayName ?? "";
     }
 }

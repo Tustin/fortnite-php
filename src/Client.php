@@ -12,6 +12,7 @@ use Fortnite\Api\Profile;
 use Fortnite\Api\SystemFile;
 use Fortnite\Api\News;
 use Fortnite\Api\Store;
+use Fortnite\Api\Leaderboard;
 
 use GuzzleHttp\Middleware;
 
@@ -27,6 +28,8 @@ class Client {
 
     private $accountId;
     private $accountInfo;
+
+    private $in_app_id;
 
     public function __construct($options = [])
     {
@@ -60,9 +63,10 @@ class Client {
         // TODO: 2FA checking here
         $this->accountId = $response->account_id;
 
-
         $handler = \GuzzleHttp\HandlerStack::create();
         $handler->push(Middleware::mapRequest(new TokenMiddleware($response->access_token, $response->refresh_token, $response->expires_in)));
+
+        $this->in_app_id = $response->in_app_id ?? "";
 
         $newOptions = array_merge(['handler' => $handler], $this->options);
 
@@ -87,6 +91,11 @@ class Client {
     public function accountId() : string
     {
         return $this->accountId;
+    }
+
+    public function inAppId() : string
+    {
+        return $this->in_app_id;
     }
 
     /**
@@ -121,6 +130,11 @@ class Client {
     public function session(string $sessionId) : Session
     {
         return new Session($this, $sessionId);
+    }
+
+    public function leaderboards(string $platform, string $mode) : Leaderboard
+    {
+        return new Leaderboard($this, $platform, $mode);
     }
 
     public function systemFiles() : array
