@@ -15,6 +15,11 @@ class Account extends AbstractApi {
         parent::__construct($client);
     }
 
+    /**
+     * Kills account session.
+     *
+     * @return void
+     */
     public function killSession() : void
     {
         $this->delete(self::ACCOUNT_API . 'oauth/sessions/kill', [
@@ -22,12 +27,21 @@ class Account extends AbstractApi {
         ]);
     }
 
-
+    /**
+     * Gets the logged in user's profile.
+     *
+     * @return Profile The logged in user profile.
+     */
     public function profile() : Profile
     {
         return new Profile($this->client, "");
     }
 
+    /**
+     * Gets the logged in user's Epic Games friends.
+     *
+     * @return array Array of Api\Profile.
+     */
     public function friends() : array
     {
         $returnFriends = [];

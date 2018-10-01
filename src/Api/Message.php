@@ -17,7 +17,7 @@ class Message extends AbstractApi {
     /**
      * Get News Message information.
      *
-     * @return object
+     * @return object Message info.
      */
     public function info() : object
     {
@@ -27,7 +27,7 @@ class Message extends AbstractApi {
     /**
      * Get title.
      *
-     * @return string
+     * @return string Title.
      */
     public function title() : string
     {
@@ -37,7 +37,7 @@ class Message extends AbstractApi {
      /**
       * Get body.
       *
-      * @return string
+      * @return string Body.
       */
     public function body() : string
     {
@@ -47,7 +47,7 @@ class Message extends AbstractApi {
     /**
      * Check if Message is hidden.
      *
-     * @return boolean
+     * @return boolean Is hidden?
      */
     public function hidden() : bool
     {
@@ -57,7 +57,7 @@ class Message extends AbstractApi {
     /**
      * Check if Message is in the spotlight.
      *
-     * @return boolean
+     * @return boolean Is spotlight?
      */
     public function spotlight() : bool
     {

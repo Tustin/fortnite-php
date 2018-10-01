@@ -20,7 +20,7 @@ class SystemFile extends AbstractApi {
     /**
      * Get filename.
      *
-     * @return string
+     * @return string Filename.
      */
     public function filename() : string 
     {
@@ -30,7 +30,7 @@ class SystemFile extends AbstractApi {
     /**
      * Get unique filename.
      *
-     * @return string
+     * @return string Unique filename.
      */
     public function uniqueFilename() : string 
     {
@@ -40,7 +40,7 @@ class SystemFile extends AbstractApi {
     /**
      * Get SHA1 file hash.
      *
-     * @return string
+     * @return string SHA1 hash.
      */
     public function hash() : string
     {
@@ -50,7 +50,7 @@ class SystemFile extends AbstractApi {
     /**
      * Get SHA256 file hash.
      *
-     * @return string
+     * @return string SHA256 hash.
      */
     public function hash256() : string
     {
@@ -59,6 +59,8 @@ class SystemFile extends AbstractApi {
 
     /**
      * Get length.
+     * 
+     * TODO (Tustin): Not an int??
      *
      * @return string
      */
@@ -71,7 +73,7 @@ class SystemFile extends AbstractApi {
     /**
      * Get upload date.
      *
-     * @return \DateTime
+     * @return \DateTime Upload date.
      */
     public function uploaded() : \DateTime
     {
@@ -81,7 +83,7 @@ class SystemFile extends AbstractApi {
     /**
      * Reads contents of the SystemFile.
      *
-     * @return string
+     * @return string File contents.
      */
     public function read() : string
     {
@@ -94,8 +96,11 @@ class SystemFile extends AbstractApi {
 
     /**
      * Gets list of all comments in file.
+     * 
+     * This parses the system file for any line starting with ';', which denotes a comment.
+     * Useful for seeing what stuff was hotfixed.
      *
-     * @return array
+     * @return array Array of String of each comment.
      */
     public function comments() : array
     {
@@ -121,7 +126,7 @@ class SystemFile extends AbstractApi {
      * bShouldRequestGeneralChatRooms=false
      * bShouldJoinGlobalChat=false
      *
-     * @return array
+     * @return array Array of each group, containing an array of each variable and the variable's value.
      */
     public function groups() : array
     {

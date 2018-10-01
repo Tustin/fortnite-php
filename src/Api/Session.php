@@ -10,6 +10,13 @@ class Session extends AbstractApi {
     private $sessionId;
     private $session;
 
+    /**
+     * Api\Session is for a current matchmaking session.
+     * Not completely mapped out, but you can var_dump($this->info()) for properties in the meantime.
+     *
+     * @param Client $client
+     * @param string $sessionId The matchmaking session ID.
+     */
     public function __construct(Client $client, string $sessionId) 
     {
         parent::__construct($client);
@@ -17,6 +24,11 @@ class Session extends AbstractApi {
         $this->sessionId = $sessionId;
     }
 
+    /**
+     * Get information for the session.
+     *
+     * @return object Session information.
+     */
     public function info() : object
     {
         if ($this->session === null) {

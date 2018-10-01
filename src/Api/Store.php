@@ -15,6 +15,11 @@ class Store extends AbstractApi {
         parent::__construct($client);
     }
 
+    /**
+     * Gets store information.
+     *
+     * @return object The store info.
+     */
     public function info() : object
     {
         if ($this->store === null) {
@@ -23,11 +28,21 @@ class Store extends AbstractApi {
         return $this->store;
     }
 
+    /**
+     * Get the expiration time for the store.
+     *
+     * @return \DateTime Expiration time.
+     */
     public function expiration() : \DateTime
     {
         return $this->info()->expiration;
     }
 
+    /**
+     * Get the daily items in the store.
+     *
+     * @return array Array of Api\StoreItem.
+     */
     public function daily() : array
     {
         $returnItems = [];
@@ -43,6 +58,11 @@ class Store extends AbstractApi {
         return $returnItems;
     }
 
+    /**
+     * Get the weekly items in the store.
+     *
+     * @return array Array of Api\StoreItem.
+     */
     public function weekly() : array
     {
         $returnItems = [];
@@ -58,6 +78,12 @@ class Store extends AbstractApi {
         return $returnItems;
     }
 
+    /**
+     * Gets a store front based on it's name.
+     *
+     * @param string $name The store front name.
+     * @return object|null The store data.
+     */
     private function storefront(string $name) : ?object
     {
         foreach ($this->info()->storefronts as $store) {

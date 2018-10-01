@@ -19,7 +19,7 @@ class News extends AbstractApi {
     /**
      * Get News.
      *
-     * @return object
+     * @return object News information.
      */
     public function info() : object
     {
@@ -33,7 +33,7 @@ class News extends AbstractApi {
     /**
      * Get title.
      *
-     * @return string
+     * @return string Title.
      */
     public function title() : string
     {
@@ -43,7 +43,7 @@ class News extends AbstractApi {
     /**
      * Get locale.
      *
-     * @return string
+     * @return string Locale.
      */
     public function locale() : string
     {
@@ -53,7 +53,7 @@ class News extends AbstractApi {
     /**
      * Get last modified DateTime.
      *
-     * @return \DateTime
+     * @return \DateTime Last modified time.
      */
     public function lastModified() : \DateTime
     {
@@ -63,7 +63,7 @@ class News extends AbstractApi {
     /**
      * Get Battle Royale News.
      *
-     * @return News
+     * @return News BR news.
      */
     public function battleRoyale() : News
     {
@@ -73,7 +73,7 @@ class News extends AbstractApi {
     /**
      * Get Save The World News.
      *
-     * @return News
+     * @return News STW news.
      */
     public function saveTheWorld() : News
     {
@@ -83,7 +83,7 @@ class News extends AbstractApi {
     /**
      * Get each message for the News.
      *
-     * @return array
+     * @return array Array of Api\Message.
      */
     public function messages() : array
     {

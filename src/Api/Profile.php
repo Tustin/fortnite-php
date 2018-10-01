@@ -62,7 +62,7 @@ class Profile extends AbstractApi {
      *
      * @return object Profile information.
      */
-    public function info() : object 
+    public function info() : object
     {
         if ($this->profile === null) {
             $response = $this->postJson(sprintf(self::FORTNITE_API . 'game/v2/profile/%s/client/QueryProfile?profileId=athena&rvn=-1', $this->accountId()), new \StdClass);
@@ -97,7 +97,7 @@ class Profile extends AbstractApi {
     /**
      * Gets the user's PS4 stats.
      *
-     * @return Platform
+     * @return Platform PS4 stats.
      */
     public function ps4() : Platform
     {
@@ -107,7 +107,7 @@ class Profile extends AbstractApi {
     /**
      * Gets the user's Xbox One stats.
      *
-     * @return Platform
+     * @return Platform Xbox One stats.
      */
     public function xboxOne() : Platform
     {
@@ -117,7 +117,7 @@ class Profile extends AbstractApi {
     /**
      * Gets the user's PC stats.
      *
-     * @return Platform
+     * @return Platform PC stats.
      */
     public function pc() : Platform
     {
@@ -127,7 +127,7 @@ class Profile extends AbstractApi {
     /**
      * Gets the user's stats raw information.
      *
-     * @return array
+     * @return array Raw stat information.
      */
     public function stats() : array
     {
@@ -184,7 +184,7 @@ class Profile extends AbstractApi {
      * 
      * This is required for getting a user's account id so their stats can be searched.
      *
-     * @return object
+     * @return object User information.
      */
     private function lookup() : object
     {
