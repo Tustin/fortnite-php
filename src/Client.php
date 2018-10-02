@@ -158,8 +158,8 @@ class Client {
     /**
      * Get leaderboard information
      *
-     * @param string $platform The platform (ps4, pc, xb1)
-     * @param string $mode The mode (solo, duo, squad)
+     * @param string $platform The platform @see Api\Type\Platform
+     * @param string $mode The mode @see Api\Type\Mode
      * @return Leaderboard
      */
     public function leaderboards(string $platform, string $mode) : Leaderboard

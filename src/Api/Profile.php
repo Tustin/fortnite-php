@@ -4,6 +4,7 @@ namespace Fortnite\Api;
 use Fortnite\Client;
 
 use Fortnite\Api\Stats\Platform;
+use Fortnite\Api\Type\Platform as PlatformType;
 
 class Profile extends AbstractApi {
 
@@ -109,7 +110,7 @@ class Profile extends AbstractApi {
      */
     public function ps4() : Platform
     {
-        return new Platform($this->client, $this->parseStats('ps4'));
+        return new Platform($this->client, $this->parseStats(PlatformType::PS4));
     }
     
     /**
@@ -119,7 +120,7 @@ class Profile extends AbstractApi {
      */
     public function xboxOne() : Platform
     {
-        return new Platform($this->client, $this->parseStats('xb1'));
+        return new Platform($this->client, $this->parseStats(PlatformType::XB1));
     }
 
     /**
@@ -129,7 +130,7 @@ class Profile extends AbstractApi {
      */
     public function pc() : Platform
     {
-        return new Platform($this->client, $this->parseStats('pc'));
+        return new Platform($this->client, $this->parseStats(PlatformType::PC));
     }
 
     /**
@@ -170,7 +171,7 @@ class Profile extends AbstractApi {
     /**
      * Parses the user's stats based on Platform.
      *
-     * @param string $platform The Platform (ps4/xb1/pc)
+     * @param string $platform The Platform @see Api\Type\Platform
      * @return array
      */
     private function parseStats(string $platform) : array 

@@ -5,6 +5,8 @@ use Fortnite\Client;
 
 use Fortnite\Api\AbstractApi;
 
+use Fortnite\Api\Type\Mode as ModeType;
+
 class Platform extends AbstractApi {
 
     private $stats;
@@ -33,7 +35,7 @@ class Platform extends AbstractApi {
      */
     public function solo() : Mode
     {
-        return new Mode($this->client, $this->mode('p2'));
+        return new Mode($this->client, $this->mode(ModeType::SOLO));
     }
 
     /**
@@ -43,7 +45,7 @@ class Platform extends AbstractApi {
      */
     public function duo() : Mode
     {
-        return new Mode($this->client, $this->mode('p10'));
+        return new Mode($this->client, $this->mode(ModeType::DUO));
     }
 
     /**
@@ -53,13 +55,13 @@ class Platform extends AbstractApi {
      */
     public function squad() : Mode
     {
-        return new Mode($this->client, $this->mode('p9'));
+        return new Mode($this->client, $this->mode(ModeType::SQUAD));
     }
 
     /**
      * Gets stats based on mode name.
      *
-     * @param string $mode The mode id.
+     * @param string $mode The mode id. @see Api\Type\Mode
      * @return array Stats.
      */
     private function mode(string $mode) : array
