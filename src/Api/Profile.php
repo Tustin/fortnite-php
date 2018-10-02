@@ -46,6 +46,12 @@ class Profile extends AbstractApi {
     {
         if ($this->displayName == '') {
             $this->displayName = $this->accountIdToDisplayName($this->accountId());
+            
+            // This is gross, but if we failed to find their display name manually, then just set their display name to their account id.
+            // May just remove this in the future...
+            if ($this->displayName == '') {
+                $this->displayName = $this->accountId();
+            }
         }
         return $this->displayName;
     }

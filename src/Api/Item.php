@@ -110,7 +110,7 @@ class Item extends AbstractApi {
     {
         // TODO (Tustin): Find out what parameters the user might want to supply to this.
         // Not totally sure what each of the arguments are for.
-        $this->postJson(sprintf(self::PROFILE_API . '%s/client/EquipBattleRoyaleCustomization?profileId=athena', $this->client->getAccountId()), [
+        $this->postJson(sprintf(self::PROFILE_API . '%s/client/EquipBattleRoyaleCustomization?profileId=athena', $this->client->accountId()), [
             'slotName' => $this->type(),
             'itemToSlot' => $this->id(), // ?? is this right??
             'indexWithinSlot' => 0,

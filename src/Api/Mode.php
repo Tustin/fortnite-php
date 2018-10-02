@@ -20,7 +20,7 @@ class Mode extends AbstractApi {
      *
      * @return array|null Stats data.
      */
-    public function stats() : array
+    public function stats() : ?array
     {
         return $this->sortedStats;
     }

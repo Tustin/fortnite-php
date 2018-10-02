@@ -34,7 +34,7 @@ class Account extends AbstractApi {
      */
     public function profile() : Profile
     {
-        return new Profile($this->client, "");
+        return new Profile($this->client, "", $this->client->accountId());
     }
 
     /**
@@ -47,17 +47,17 @@ class Account extends AbstractApi {
         $returnFriends = [];
         $friends = $this->get(self::FRIENDS_API . $this->client->accountId());
 
+        $ids = [];
         foreach ($friends as $friend) {
-            $accountInfo = $this->get(self::ACCOUNT_API . 'public/account', [
-                'accountId' => $friend->accountId
-            ])[0];
+            $ids[] = $friend->accountId;
+        }
 
-            // This can happen for some reason. Probably want to try to still return this user but for now, skip them.
-            if (!isset($accountInfo->displayName)) {
-                continue;
-            }
+        $accounts = $this->get(self::ACCOUNT_API . 'public/account', [
+            'accountId' => implode('&accountId=', $ids)
+        ]);
 
-            $returnFriends[] = new Profile($this->client, $accountInfo->displayName, $friend->accountId);
+        foreach ($accounts as $account) {
+            $returnFriends[] = new Profile($this->client, $account->displayName ?? '', $account->id);
         }
 
         return $returnFriends;
