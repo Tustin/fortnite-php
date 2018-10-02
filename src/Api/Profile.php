@@ -3,8 +3,7 @@ namespace Fortnite\Api;
 
 use Fortnite\Client;
 
-use Fortnite\Api\Stat;
-use Fortnite\Api\Platform;
+use Fortnite\Api\Stats\Platform;
 
 class Profile extends AbstractApi {
 
@@ -46,7 +45,7 @@ class Profile extends AbstractApi {
     {
         if ($this->displayName == '') {
             $this->displayName = $this->accountIdToDisplayName($this->accountId());
-            
+
             // This is gross, but if we failed to find their display name manually, then just set their display name to their account id.
             // May just remove this in the future...
             if ($this->displayName == '') {

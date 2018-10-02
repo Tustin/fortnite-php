@@ -1,7 +1,9 @@
 <?php
-namespace Fortnite\Api;
+namespace Fortnite\Api\Stats;
 
 use Fortnite\Client;
+
+use Fortnite\Api\AbstractApi;
 
 class Mode extends AbstractApi {
 

@@ -3,7 +3,7 @@ namespace Fortnite\Api;
 
 use Fortnite\Client;
 
-use Fortnite\Api\StoreItem;
+use Fortnite\Api\Store\Item;
 
 class Store extends AbstractApi {
     const STORE_ENDPOINT  = "https://fortnite-public-service-prod11.ol.epicgames.com/fortnite/api/storefront/v2/catalog";
@@ -41,7 +41,7 @@ class Store extends AbstractApi {
     /**
      * Get the daily items in the store.
      *
-     * @return array Array of Api\StoreItem.
+     * @return array Array of Api\Store\Item.
      */
     public function daily() : array
     {
@@ -52,7 +52,7 @@ class Store extends AbstractApi {
         if ($storeItems === null) return $returnItems;
 
         foreach ($storeItems->catalogEntries as $entry) {
-            $returnItems[] = new StoreItem($this->client, $entry);
+            $returnItems[] = new Store\Item($this->client, $entry);
         }
 
         return $returnItems;
@@ -61,7 +61,7 @@ class Store extends AbstractApi {
     /**
      * Get the weekly items in the store.
      *
-     * @return array Array of Api\StoreItem.
+     * @return array Array of Api\Store\Item.
      */
     public function weekly() : array
     {
@@ -72,7 +72,7 @@ class Store extends AbstractApi {
         if ($storeItems === null) return $returnItems;
 
         foreach ($storeItems->catalogEntries as $entry) {
-            $returnItems[] = new StoreItem($this->client, $entry);
+            $returnItems[] = new Store\Item($this->client, $entry);
         }
 
         return $returnItems;

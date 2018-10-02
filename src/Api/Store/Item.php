@@ -1,9 +1,11 @@
 <?php
-namespace Fortnite\Api;
+namespace Fortnite\Api\Store;
 
 use Fortnite\Client;
 
-class StoreItem extends AbstractApi {
+use Fortnite\Api\AbstractApi;
+
+class Item extends AbstractApi {
     private $item;
 
     public function __construct(Client $client, object $item) 
