@@ -117,5 +117,4 @@ class Item extends AbstractApi {
             'variantUpdates' => []
         ]);
     }
-
 }

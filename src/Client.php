@@ -13,6 +13,7 @@ use Fortnite\Api\SystemFile;
 use Fortnite\Api\News;
 use Fortnite\Api\Store;
 use Fortnite\Api\Leaderboard;
+use Fortnite\Api\Status;
 
 use GuzzleHttp\Middleware;
 
@@ -93,6 +94,11 @@ class Client {
         return $this->accountId;
     }
 
+    /**
+     * Gets the in app ID (for leaderboard cohort).
+     *
+     * @return string
+     */
     public function inAppId() : string
     {
         return $this->in_app_id;
@@ -117,26 +123,55 @@ class Client {
         return $this->accountInfo;
     }
 
+    /**
+     * Get the logged in user's account.
+     *
+     * @return Account
+     */
     public function account() : Account
     {
         return new Account($this);
     }
 
+    /**
+     * Get a user's profile.
+     *
+     * @param string $username The user's display name.
+     * @return Profile
+     */
     public function profile(string $username = null) : Profile
     {
         return new Profile($this, $username ?? $this->displayName());
     }
 
+    /**
+     * Get a matchmaking session.
+     *
+     * @param string $sessionId The session ID.
+     * @return Session
+     */
     public function session(string $sessionId) : Session
     {
         return new Session($this, $sessionId);
     }
 
+    /**
+     * Get leaderboard information
+     *
+     * @param string $platform The platform (ps4, pc, xb1)
+     * @param string $mode The mode (solo, duo, squad)
+     * @return Leaderboard
+     */
     public function leaderboards(string $platform, string $mode) : Leaderboard
     {
         return new Leaderboard($this, $platform, $mode);
     }
 
+    /**
+     * Get system files (hotfixes)
+     *
+     * @return array Array of Api\SystemFile.
+     */
     public function systemFiles() : array
     {
         $returnSystemFiles = [];
@@ -150,6 +185,11 @@ class Client {
         return $returnSystemFiles;
     }
 
+    /**
+     * Get Fortnite news.
+     *
+     * @return News
+     */
     public function news() : News
     {
         return new News($this);
@@ -163,5 +203,15 @@ class Client {
     public function store() : Store
     {
         return new Store($this);
+    }
+
+    /**
+     * Gets the Fortnite status.
+     *
+     * @return Status
+     */
+    public function status() : Status
+    {
+        return new Status($this);
     }
 }
