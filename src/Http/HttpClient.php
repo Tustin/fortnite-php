@@ -2,10 +2,14 @@
 
 namespace Fortnite\Http;
 
+use Fortnite\Http\Exception\FortniteException;
+
 use GuzzleHttp\Client as GuzzleClient;
 use GuzzleHttp\ClientInterface;
 use GuzzleHttp\Message\Request;
 use GuzzleHttp\Message\Response;
+
+use GuzzleHttp\Exception\ClientException;
 
 class HttpClient {
 
@@ -76,8 +80,11 @@ class HttpClient {
 
         try {
             return $this->client->request($method, $path, $options);
+        } catch (ClientException $e) {
+            $body = $e->getResponse()->getBody(true);
+            throw new FortniteException($body);
         } catch (GuzzleException $e) {
             throw $e;
-        } 
+        }
     }
 }

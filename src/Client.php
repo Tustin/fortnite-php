@@ -7,6 +7,8 @@ use Fortnite\Http\ResponseParser;
 use Fortnite\Http\TokenMiddleware;
 use Fortnite\Http\FortniteAuthMiddleware;
 
+use Fortnite\Http\Exception\FortniteException;
+
 use Fortnite\Api\Account;
 use Fortnite\Api\Profile;
 use Fortnite\Api\SystemFile;
@@ -14,6 +16,8 @@ use Fortnite\Api\News;
 use Fortnite\Api\Store;
 use Fortnite\Api\Leaderboard;
 use Fortnite\Api\Status;
+
+use Fortnite\Api\Exception\TwoFactorRequiredException;
 
 use GuzzleHttp\Middleware;
 
@@ -30,48 +34,105 @@ class Client {
     private $accountId;
     private $accountInfo;
 
+    private $challenge;
+    private $deviceId;
+
     private $in_app_id;
 
     public function __construct($options = [])
     {
         $this->options = $options;
-        $handler = \GuzzleHttp\HandlerStack::create();
-        $handler->push(Middleware::mapRequest(new FortniteAuthMiddleware));
 
-        $newOptions = array_merge(['handler' => $handler], $this->options);
-
-        $this->httpClient = new HttpClient(new \GuzzleHttp\Client($newOptions));
+        // Create a random hash to be used for the device ID.
+        // This random ID can be overwritten by passing $deviceId to login().
+        $this->deviceId = md5(uniqid());
     }
     
     /**
      * Login to Fortnite using Epic email and password.
      *
-     * @param string $email
-     * @param string $password
+     * @param string $email The email.
+     * @param string $password The password.
+     * @param string $deviceId The device ID.
+     * 
+     * The device ID parameter is optional, and should only be used if the account you're logging in with has two factor authentication enabled.
+     * If you've logged in with this device token, you won't have to enter 2FA details.
+     * 
      * @return void
      */
-    public function login(string $email, string $password) 
+    public function login(string $email, string $password, string $deviceId = '') 
     {
-        // Get our Epic Launcher authorization token.
-        $response = $this->httpClient()->post(self::EPIC_ACCOUNT_ENDPOINT . 'oauth/token', [
-            'grant_type'    => 'password',
-            'username'      => $email,
-            'password'      => $password,
-            'includePerms'  => 'false',
-            'token_type'    => 'eg1'
-        ]);
-
-        // TODO: 2FA checking here
-        $this->accountId = $response->account_id;
+        if ($deviceId != '') {
+            $this->deviceId = $deviceId;
+        }
 
         $handler = \GuzzleHttp\HandlerStack::create();
-        $handler->push(Middleware::mapRequest(new TokenMiddleware($response->access_token, $response->refresh_token, $response->expires_in)));
-
-        $this->in_app_id = $response->in_app_id ?? "";
+        $handler->push(Middleware::mapRequest(new FortniteAuthMiddleware($this->deviceId)));
 
         $newOptions = array_merge(['handler' => $handler], $this->options);
 
         $this->httpClient = new HttpClient(new \GuzzleHttp\Client($newOptions));
+
+        try {
+            // Get our Epic Launcher authorization token.
+            $response = $this->httpClient()->post(self::EPIC_ACCOUNT_ENDPOINT . 'oauth/token', [
+                'grant_type'    => 'password',
+                'username'      => $email,
+                'password'      => $password,
+                'includePerms'  => 'false',
+                'token_type'    => 'eg1'
+            ]);
+        } catch (FortniteException $e) {
+            if ($e->code() === 'errors.com.epicgames.common.two_factor_authentication.required') {
+                $this->challenge = $e->challenge();
+                throw new TwoFactorRequiredException();
+            }
+            throw $e;
+        }
+
+        $this->httpClient = $this->buildHttpClient($response);
+
+        $this->account()->killSession();
+    }
+
+    public function twoFactor(string $code) : void
+    {
+        if (!$this->challenge) {
+            throw new Exception('Two factor challenge has not been set.');
+        }
+
+        $response = $this->httpClient()->post(self::EPIC_ACCOUNT_ENDPOINT . 'oauth/token', [
+            'grant_type'    =>  'otp',
+            'otp'          =>   $code,
+            'challenge'     =>  $this->challenge,
+            'includePerms'  =>  'true',
+            'token_type'    =>  'eg1'
+        ]);
+
+        $this->httpClient = $this->buildHttpClient($response);
+
+        $this->account()->killSession();
+    }
+
+    /**
+     * Creates a new HttpClient for making authenticated requests to the Fortnite API.
+     *
+     * @param object $response The login response data.
+     * @return HttpClient
+     */
+    private function buildHttpClient(object $response) : HttpClient
+    {
+        $this->accountId = $response->account_id;
+        $this->in_app_id = $response->in_app_id ?? "";
+
+        $handler = \GuzzleHttp\HandlerStack::create();
+        $handler->push(Middleware::mapRequest(
+            new TokenMiddleware($response->access_token, $response->refresh_token, $response->expires_in, $this->deviceId))
+        );
+
+        $newOptions = array_merge(['handler' => $handler], $this->options);
+
+        return new HttpClient(new \GuzzleHttp\Client($newOptions));
     }
 
     /**
@@ -85,7 +146,7 @@ class Client {
     }
 
     /**
-     * Get the user's account ID.
+     * Gets the user's account ID.
      *
      * @return string
      */
@@ -102,6 +163,18 @@ class Client {
     public function inAppId() : string
     {
         return $this->in_app_id;
+    }
+
+    /**
+     * Gets the device ID used for two factor authenticated requests.
+     * 
+     * This Id can be used once you've logged in with it to automatically login even if 2FA is active on your account.
+     *
+     * @return string
+     */
+    public function deviceId() : string
+    {
+        return $this->deviceId;
     }
 
     /**
@@ -124,7 +197,7 @@ class Client {
     }
 
     /**
-     * Get the logged in user's account.
+     * Gets the logged in user's account.
      *
      * @return Account
      */
@@ -134,7 +207,7 @@ class Client {
     }
 
     /**
-     * Get a user's profile.
+     * Gets a user's profile.
      *
      * @param string $username The user's display name.
      * @return Profile
@@ -145,7 +218,7 @@ class Client {
     }
 
     /**
-     * Get a matchmaking session.
+     * Gets a matchmaking session.
      *
      * @param string $sessionId The session ID.
      * @return Session
@@ -156,7 +229,7 @@ class Client {
     }
 
     /**
-     * Get leaderboard information
+     * Gets leaderboard information
      *
      * @param string $platform The platform @see Api\Type\Platform
      * @param string $mode The mode @see Api\Type\Mode
@@ -168,7 +241,7 @@ class Client {
     }
 
     /**
-     * Get system files (hotfixes)
+     * Gets system files (hotfixes)
      *
      * @return array Array of Api\SystemFile.
      */
@@ -186,7 +259,7 @@ class Client {
     }
 
     /**
-     * Get Fortnite news.
+     * Gets Fortnite news.
      *
      * @return News
      */
