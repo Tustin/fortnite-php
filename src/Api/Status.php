@@ -21,10 +21,10 @@ class Status extends AbstractApi {
      */
     public function info() : object
     {
-        if ($this->session === null) {
-            $this->session = $this->get(self::STATUS_API)[0];
+        if ($this->status === null) {
+            $this->status = $this->get(self::STATUS_API)[0];
         }
-        return $this->session;
+        return $this->status;
     }
 
     /**

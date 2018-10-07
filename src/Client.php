@@ -27,6 +27,10 @@ class Client {
     const EPIC_OAUTH_EXCHANGE_ENDPOINT  = 'https://account-public-service-prod03.ol.epicgames.com/account/api/oauth/exchange';
     const EPIC_OAUTH_VERIFY_ENDPOINT    = 'https://account-public-service-prod03.ol.epicgames.com/account/api/oauth/verify';
     const EPIC_FRIENDS_ENDPOINT         = 'https://friends-public-service-prod06.ol.epicgames.com/friends/api/public/friends/';
+    const EPIC_EULA_ENDPOINT            = 'https://eulatracking-public-service-prod-m.ol.epicgames.com/eulatracking/api/public/agreements/fn/';
+    const EPIC_EULA_GRANT_ENDPOINT      = 'https://fortnite-public-service-prod11.ol.epicgames.com/fortnite/api/game/v2/grant_access/';
+
+    const FALLBACK_VERSION_NO = 4;
 
     private $httpClient;
     private $options;
@@ -93,6 +97,10 @@ class Client {
         $this->httpClient = $this->buildHttpClient($response);
 
         $this->account()->killSession();
+
+        if (!$this->canPlay()) {
+            $this->verifyEula();
+        }
     }
 
     public function twoFactor(string $code) : void
@@ -105,14 +113,55 @@ class Client {
             'grant_type'    =>  'otp',
             'otp'          =>   $code,
             'challenge'     =>  $this->challenge,
-            'includePerms'  =>  'true',
+            'includePerms'  =>  'false',
             'token_type'    =>  'eg1'
         ]);
 
         $this->httpClient = $this->buildHttpClient($response);
 
         $this->account()->killSession();
+
+        if (!$this->canPlay()) {
+            $this->verifyEula();
+        }
     }
+
+    /**
+     * Checks if the user can play the game.
+     * 
+     * Used to determine if the EULA should be automatically accepted or not.
+     *
+     * @return boolean Can the user play?
+     */
+    private function canPlay() 
+    {
+        $status = $this->status();
+        return $status->status() === 'UP' && !empty($status->allowedActions()) && in_array('PLAY', $status->allowedActions());
+    }
+
+    /**
+     * Automatically verifies EULA for new accounts.
+     *
+     * @return void
+     */
+    public function verifyEula() : void
+    {
+        $data = $this->httpClient()->get(sprintf(self::EPIC_EULA_ENDPOINT . 'account/%s?locale=en-US', $this->accountId()));
+
+        $version = $data->version ?? self::FALLBACK_VERSION_NO;
+
+        $this->httpClient()->post(sprintf(self::EPIC_EULA_ENDPOINT .  'version/%d/account/%s/accept?locale=en', $version, $this->accountId()), new \StdClass());
+
+        $this->httpClient()->post(sprintf(self::EPIC_EULA_GRANT_ENDPOINT . '%s', $this->accountId()), new \StdClass(), HttpClient::JSON);
+    }
+
+    //TODO: Add these
+    //https://account-public-service-prod03.ol.epicgames.com/account/api/oauth/token 
+    //grant_type=refresh_token&refresh_token=<token>&includePerms=true&token_type=eg1
+
+    //device auth
+    //https://account-public-service-prod03.ol.epicgames.com/account/api/oauth/token 
+    //grant_type=device_auth&account_id=<account id>&device_id=<device>&secret=<secret>&includePerms=true&token_type=eg1
 
     /**
      * Creates a new HttpClient for making authenticated requests to the Fortnite API.
@@ -143,6 +192,16 @@ class Client {
     public function httpClient() : HttpClient
     {
         return $this->httpClient;
+    }
+
+    /**
+     * Gets the refresh token.
+     *
+     * @return string Refresh token.
+     */
+    public function refreshToken() : string
+    {
+        return $this->refreshToken;
     }
 
     /**
