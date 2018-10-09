@@ -82,7 +82,7 @@ class Store extends AbstractApi {
      * Gets a store front based on it's name.
      *
      * @param string $name The store front name.
-     * @return object|null The store data, or null if the store
+     * @return object|null The store data, or null if a storefront with the given name doesn't exist.
      */
     private function storefront(string $name) : ?object
     {
