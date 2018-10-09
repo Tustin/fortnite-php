@@ -39,7 +39,9 @@ class Leaderboard extends AbstractApi {
             // Note (Tustin): itemsPerPage is hardcoded because I'm not sure what to pass to the cohort request above to get more than 50 account ids.
             // If someone knows, feel free to implement a $limit parameter to allow for a custom amount of leaderboard entries.
             $this->info = $this->postJson(
-                sprintf(self::LEADERBOARD_API . 'br_placetop1_%s_m0_%s/window/weekly?ownertype=1&itemsPerPage=50', $this->platform(), $this->mode()),
+                sprintf(
+                    self::LEADERBOARD_API . 'br_placetop1_%s_m0_%s/window/weekly?ownertype=1&itemsPerPage=50', $this->platform(), $this->mode()
+                ),
                 $cohort->cohortAccounts
             );
         }

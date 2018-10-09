@@ -2,12 +2,6 @@
 
 namespace Fortnite;
 
-use Fortnite\Http\HttpClient;
-use Fortnite\Http\ResponseParser;
-use Fortnite\Http\TokenMiddleware;
-use Fortnite\Http\FortniteAuthMiddleware;
-
-use Fortnite\Http\Exception\FortniteException;
 
 use Fortnite\Api\Account;
 use Fortnite\Api\Profile;
@@ -18,6 +12,15 @@ use Fortnite\Api\Leaderboard;
 use Fortnite\Api\Status;
 
 use Fortnite\Api\Exception\TwoFactorRequiredException;
+
+use Fortnite\Http\HttpClient;
+use Fortnite\Http\ResponseParser;
+use Fortnite\Http\TokenMiddleware;
+use Fortnite\Http\FortniteAuthMiddleware;
+
+use Fortnite\Http\Exception\FortniteException;
+
+use Fortnite\Model\TokenModel;
 
 use GuzzleHttp\Middleware;
 
@@ -34,6 +37,9 @@ class Client {
 
     private $httpClient;
     private $options;
+
+    private $accessToken;
+    private $refreshToken;
 
     private $accountId;
     private $accountInfo;
@@ -103,6 +109,12 @@ class Client {
         }
     }
 
+    /**
+     * Performs two factor authentication after logging in.
+     *
+     * @param string $code The code from email or authenticator app.
+     * @return void
+     */
     public function twoFactor(string $code) : void
     {
         if (!$this->challenge) {
@@ -179,6 +191,10 @@ class Client {
             new TokenMiddleware($response->access_token, $response->refresh_token, $response->expires_in, $this->deviceId))
         );
 
+        // Set the token info
+        $this->accessToken = new TokenModel($response->access_token, $response->expires_in, $response->expires_at);
+        $this->refreshToken = new TokenModel($response->refresh_token, $response->refresh_expires, $response->refresh_expires_at);
+
         $newOptions = array_merge(['handler' => $handler], $this->options);
 
         return new HttpClient(new \GuzzleHttp\Client($newOptions));
@@ -195,11 +211,21 @@ class Client {
     }
 
     /**
-     * Gets the refresh token.
+     * Gets the access token model.
      *
-     * @return string Refresh token.
+     * @return TokenModel Access token model.
      */
-    public function refreshToken() : string
+    public function accessToken() : TokenModel
+    {
+        return $this->accessToken;
+    }
+
+    /**
+     * Gets the refresh token model.
+     *
+     * @return TokenModel Refresh token model.
+     */
+    public function refreshToken() : TokenModel
     {
         return $this->refreshToken;
     }
@@ -207,7 +233,7 @@ class Client {
     /**
      * Gets the user's account ID.
      *
-     * @return string
+     * @return string Account ID.
      */
     public function accountId() : string
     {
@@ -217,7 +243,7 @@ class Client {
     /**
      * Gets the in app ID (for leaderboard cohort).
      *
-     * @return string
+     * @return string In-app ID.
      */
     public function inAppId() : string
     {
@@ -229,7 +255,7 @@ class Client {
      * 
      * This Id can be used once you've logged in with it to automatically login even if 2FA is active on your account.
      *
-     * @return string
+     * @return string Device ID.
      */
     public function deviceId() : string
     {
@@ -239,13 +265,18 @@ class Client {
     /**
      * Gets the user's Epic display name
      *
-     * @return string
+     * @return string Display name.
      */
     public function displayName() : string
     {
         return $this->accountInfo()->displayName;
     }
 
+    /**
+     * Gets the account info for the logged in account.
+     *
+     * @return object Account info.
+     */
     public function accountInfo() : object
     {
         if ($this->accountInfo === null) {
