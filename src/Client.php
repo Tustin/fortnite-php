@@ -56,6 +56,10 @@ class Client {
         // Create a random hash to be used for the device ID.
         // This random ID can be overwritten by passing $deviceId to login().
         $this->deviceId = md5(uniqid());
+
+        $this->httpClient = $this->buildHttpClient(
+            new FortniteAuthMiddleware($this->deviceId)
+        );
     }
     
     /**
@@ -70,18 +74,16 @@ class Client {
      * 
      * @return void
      */
-    public function login(string $email, string $password, string $deviceId = '') 
+    public function login(string $email, string $password, string $deviceId = '') : void
     {
         if ($deviceId != '') {
             $this->deviceId = $deviceId;
+            
+            // If the user passed a custom deviceId, go ahead and update the default HttpClient to use the new deviceId.
+            $this->httpClient = $this->buildHttpClient(
+                new FortniteAuthMiddleware($this->deviceId)
+            );
         }
-
-        $handler = \GuzzleHttp\HandlerStack::create();
-        $handler->push(Middleware::mapRequest(new FortniteAuthMiddleware($this->deviceId)));
-
-        $newOptions = array_merge(['handler' => $handler], $this->options);
-
-        $this->httpClient = new HttpClient(new \GuzzleHttp\Client($newOptions));
 
         try {
             // Get our Epic Launcher authorization token.
@@ -99,8 +101,8 @@ class Client {
             }
             throw $e;
         }
-
-        $this->httpClient = $this->buildHttpClient($response);
+        
+        $this->httpClient = $this->finalizeLogin($response);
 
         $this->account()->killSession();
 
@@ -129,7 +131,31 @@ class Client {
             'token_type'    =>  'eg1'
         ]);
 
-        $this->httpClient = $this->buildHttpClient($response);
+        $this->httpClient = $this->finalizeLogin($response);
+
+        $this->account()->killSession();
+
+        if (!$this->canPlay()) {
+            $this->verifyEula();
+        }
+    }
+    
+    /**
+     * Login to Fortnite using a refresh token.
+     * 
+     * @param string $refreshToken The refresh token.
+     * @return void
+     */
+    public function refresh(string $refreshToken) : void
+    {
+        $response = $this->httpClient()->post(self::EPIC_ACCOUNT_ENDPOINT . 'oauth/token', [
+            'grant_type'    =>  'refresh_token',
+            'refresh_token' =>   $refreshToken,
+            'includePerms'  =>  'false',
+            'token_type'    =>  'eg1'
+        ]);
+
+        $this->httpClient = $this->finalizeLogin($response);
 
         $this->account()->killSession();
 
@@ -145,7 +171,7 @@ class Client {
      *
      * @return boolean Can the user play?
      */
-    private function canPlay() 
+    private function canPlay() : bool
     {
         $status = $this->status();
         return $status->status() === 'UP' && !empty($status->allowedActions()) && in_array('PLAY', $status->allowedActions());
@@ -160,6 +186,7 @@ class Client {
     {
         $data = $this->httpClient()->get(sprintf(self::EPIC_EULA_ENDPOINT . 'account/%s?locale=en-US', $this->accountId()));
 
+        // If for some reason we can't get the latest version, fallback to the latest hardcoded version number.
         $version = $data->version ?? self::FALLBACK_VERSION_NO;
 
         $this->httpClient()->post(sprintf(self::EPIC_EULA_ENDPOINT .  'version/%d/account/%s/accept?locale=en', $version, $this->accountId()), new \StdClass());
@@ -167,33 +194,40 @@ class Client {
         $this->httpClient()->post(sprintf(self::EPIC_EULA_GRANT_ENDPOINT . '%s', $this->accountId()), new \StdClass(), HttpClient::JSON);
     }
 
-    //TODO: Add these
-    //https://account-public-service-prod03.ol.epicgames.com/account/api/oauth/token 
-    //grant_type=refresh_token&refresh_token=<token>&includePerms=true&token_type=eg1
-
-    //device auth
-    //https://account-public-service-prod03.ol.epicgames.com/account/api/oauth/token 
-    //grant_type=device_auth&account_id=<account id>&device_id=<device>&secret=<secret>&includePerms=true&token_type=eg1
-
     /**
-     * Creates a new HttpClient for making authenticated requests to the Fortnite API.
+     * Finalize the Fortnite login.
+     * 
+     * This method sets some Client properties and creates a new HttpClient that is authorized to make requests to Fortnite's endpoints.
      *
-     * @param object $response The login response data.
-     * @return HttpClient
+     * @param object $response Response from a Fortnite login request.
+     * @return HttpClient Authorized HttpClient.
      */
-    private function buildHttpClient(object $response) : HttpClient
+    private function finalizeLogin(object $response) : HttpClient
     {
+        // Set client info.
         $this->accountId = $response->account_id;
         $this->in_app_id = $response->in_app_id ?? "";
 
-        $handler = \GuzzleHttp\HandlerStack::create();
-        $handler->push(Middleware::mapRequest(
-            new TokenMiddleware($response->access_token, $response->refresh_token, $response->expires_in, $this->deviceId))
-        );
-
-        // Set the token info
-        $this->accessToken = new TokenModel($response->access_token, $response->expires_in, $response->expires_at);
+        // Set the token info.
+        $this->accessToken  = new TokenModel($response->access_token, $response->expires_in, $response->expires_at);
         $this->refreshToken = new TokenModel($response->refresh_token, $response->refresh_expires, $response->refresh_expires_at);
+
+        // Build a new HttpClient with the authorization middleware.
+        return $this->buildHttpClient(
+            new TokenMiddleware($response->access_token, $response->refresh_token, $response->expires_in, $this->deviceId)
+        );
+    }
+
+    /**
+     * Builds a new HttpClient.
+     *
+     * @param object $middleware Middleware to be used for the request.
+     * @return HttpClient The new HttpClient.
+     */
+    private function buildHttpClient(object $middleware) : HttpClient
+    {
+        $handler = \GuzzleHttp\HandlerStack::create();
+        $handler->push(Middleware::mapRequest($middleware));
 
         $newOptions = array_merge(['handler' => $handler], $this->options);
 

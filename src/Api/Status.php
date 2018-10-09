@@ -17,7 +17,7 @@ class Status extends AbstractApi {
     /**
      * Gets the status for Fortnite.
      *
-     * @return object
+     * @return object Status info.
      */
     public function info() : object
     {
@@ -30,7 +30,7 @@ class Status extends AbstractApi {
     /**
      * Gets the status string for the game.
      *
-     * @return string The status
+     * @return string The status.
      */
     public function status() : string
     {
