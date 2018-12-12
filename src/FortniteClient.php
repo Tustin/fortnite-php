@@ -8,7 +8,7 @@ class FortniteClient {
     /**
      * base64 encoded string of two MD5 hashes delimited by a colon. The two hashes are the client_id and client_secret OAuth2 fields.
      */
-    const EPIC_LAUNCHER_AUTHORIZATION   = "MzRhMDJjZjhmNDQxNGUyOWIxNTkyMTg3NmRhMzZmOWE6ZGFhZmJjY2M3Mzc3NDUwMzlkZmZlNTNkOTRmYzc2Y2Y=";
+    const EPIC_LAUNCHER_AUTHORIZATION   = "MzQ0NmNkNzI2OTRjNGE0NDg1ZDgxYjc3YWRiYjIxNDE6OTIwOWQ0YTVlMjVhNDU3ZmI5YjA3NDg5ZDMxM2I0MWE=";
 
     
     /**
@@ -37,9 +37,8 @@ class FortniteClient {
     const FORTNITE_EULA_API             = "https://eulatracking-public-service-prod-m.ol.epicgames.com/eulatracking/api/";
 
 
-
     const UNREAL_CLIENT_USER_AGENT      = "game=UELauncher, engine=UE4, build=7.14.2-4231683+++Portal+Release-Live";
-    const FORTNITE_USER_AGENT           = "Fortnite/++Fortnite+Release-5.20-CL-4259375 Windows/10.0.17728.1.256.64bit";
+    const FORTNITE_USER_AGENT           = "Fortnite/++Fortnite+Release-7.01-CL-4644078 IOS/11.3.1";
 
 
 
